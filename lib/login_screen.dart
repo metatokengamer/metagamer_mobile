@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:metagamer/change_page.dart';
+import 'package:metagamer/login/email_login.dart';
 
 import 'appbar.dart';
 import 'bottom_nav.dart';
@@ -34,6 +36,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -44,13 +47,17 @@ class _LoginState extends State<Login> {
             LoginScreenButton(
                 color: Colors.white,
                 image: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15.0, horizontal: 10.0),
                   child: Image.asset(
                     "assets/googleicon.png",
                     height: 20.0,
                   ),
                 ),
-                text: Text("Google 로그인", style: TextStyle(color: Colors.black),),
+                text: Text(
+                  "Google 로그인",
+                  style: TextStyle(color: Colors.black),
+                ),
                 onPressed: () {}),
             SizedBox(
               height: 20.0,
@@ -58,21 +65,34 @@ class _LoginState extends State<Login> {
             LoginScreenButton(
                 color: Colors.grey.shade300,
                 image: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
-                  child: Icon(Icons.email_rounded)
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15.0, horizontal: 10.0),
+                    child: Icon(Icons.email_rounded)),
+                text: Text(
+                  "Email 로그인",
+                  style: TextStyle(color: Colors.black),
                 ),
-                text: Text("Email 로그인", style: TextStyle(color: Colors.black),),
-                onPressed: () {}),
+                onPressed: () {
+                  print(ModalRoute.of(context)!.settings.name);
+                  // goToEmailLogin();
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => EmailLogin()));
+                  // Navigator.pushNamed(context, "/login/email_login");
+
+                  Navigator.push(context, PageRouteBuilder(pageBuilder: (_, __, ___) => EmailLogin(), transitionDuration: Duration.zero));
+                }),
             SizedBox(
               height: 20.0,
             ),
             LoginScreenButton(
                 color: Colors.indigoAccent,
                 image: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
-                    child: Icon(Icons.account_circle)
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15.0, horizontal: 10.0),
+                    child: Icon(Icons.account_circle)),
+                text: Text(
+                  "회원가입",
+                  style: TextStyle(color: Colors.white),
                 ),
-                text: Text("회원가입", style: TextStyle(color: Colors.white),),
                 onPressed: () {})
           ],
         ),
@@ -104,7 +124,7 @@ class LoginScreenButton extends StatelessWidget {
               primary: color,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25.0))),
-          onPressed: () {},
+          onPressed: onPressed,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

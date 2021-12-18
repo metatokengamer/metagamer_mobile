@@ -48,9 +48,14 @@ class Login extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(primary: Colors.indigo, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0))),
         onPressed: () {
+          print(ModalRoute.of(context)!.settings.name);
           // Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-          Navigator.of(context).push(goToLogin());
+          // Navigator.of(context).push(goToLogin());
           // Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (context, a, b) => LoginScreen(), transitionDuration: Duration.zero));
+          // Navigator.pushNamed(context, "/login");
+
+          // Navigator.pushNamed(context, PageRouteBuilder(pageBuilder: (context, a1, a2) => , transitionDuration: Duration.zero));
+          Navigator.push(context, PageRouteBuilder(pageBuilder: (_, __, ___) => LoginScreen(), transitionDuration: Duration.zero));
         },
         child: Text("Login"),
       ),
