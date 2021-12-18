@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "291062602570",
+    "project_id": "metagamer-8d6a1",
+    "storage_bucket": "metagamer-8d6a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291062602570:android:799c93931d93488b39bfb3",
+        "android_client_info": {
+          "package_name": "com.metagamer.metagamer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "291062602570-cehi3rkvv576nn96k3inccs44siu22q0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5dar4k6K-BFF0qZo1ZxvZbKN4u0NCr4s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "291062602570-cehi3rkvv576nn96k3inccs44siu22q0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
