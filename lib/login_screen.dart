@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:metagamer/change_page.dart';
+import 'package:metagamer/current_route.dart';
 import 'package:metagamer/login/email_login.dart';
 
 import 'appbar.dart';
@@ -15,14 +16,21 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
+    setRoute(2);
     return SafeArea(
-      child: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [CustomAppbar(), Login(), BottomNav()],
+      child: WillPopScope(
+        child: Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [CustomAppbar(), Login(), BottomNav()],
+            ),
           ),
         ),
+        onWillPop: () {
+          currentRoute = CurrentRoute.home;
+          return Future.value(true);
+        },
       ),
     );
   }

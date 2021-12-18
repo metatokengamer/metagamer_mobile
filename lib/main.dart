@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:metagamer/appbar.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:metagamer/current_route.dart';
 import 'package:metagamer/login/email_login.dart';
 import 'package:metagamer/main_page.dart';
 
@@ -87,6 +88,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    setRoute(1);
     return SafeArea(
       child: Scaffold(
         body: Center(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:metagamer/current_route.dart';
 
 import '../appbar.dart';
 import '../bottom_nav.dart';
@@ -8,6 +9,7 @@ class EmailLogin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    setRoute(3);
     return SafeArea(
       child: Scaffold(
         body: Center(
