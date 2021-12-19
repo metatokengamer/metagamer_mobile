@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:metagamer/change_page.dart';
 import 'package:metagamer/current_route.dart';
 import 'package:metagamer/login/email_login.dart';
+import 'package:metagamer/login/signup.dart';
 
 import '../appbar.dart';
 import '../bottom_nav.dart';
@@ -97,7 +98,9 @@ class _LoginState extends State<Login> {
                   "회원가입",
                   style: TextStyle(color: Colors.white),
                 ),
-                onPressed: () {})
+                onPressed: () {
+                  Navigator.push(context, PageRouteBuilder(pageBuilder: (_, __, ___) => SignUp(), transitionDuration: Duration.zero));
+                })
           ],
         ),
       ),

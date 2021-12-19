@@ -49,7 +49,7 @@ class Login extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(primary: Colors.indigo, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0))),
         onPressed: () {
-          if (currentRoute != CurrentRoute.login) {
+          if (currentRoute != CurrentRoute.login && currentRoute != CurrentRoute.emailLogin && currentRoute != CurrentRoute.signup) {
             Navigator.push(context, PageRouteBuilder(pageBuilder: (_, __, ___) => LoginScreen(), transitionDuration: Duration.zero));
           }
         },
