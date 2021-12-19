@@ -13,11 +13,17 @@ class SignUp extends StatelessWidget {
     return SafeArea(
       child: WillPopScope(
         child: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [CustomAppbar(), EditSignUp(), BottomNav()],
-            ),
+          resizeToAvoidBottomInset: false,
+          body: Column(
+            children: [
+              CustomAppbar(),
+              EditSignUp(),
+              Expanded(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [Opacity(opacity: 0.0), BottomNav()],
+              ))
+            ],
           ),
         ),
         onWillPop: () {
@@ -47,7 +53,7 @@ class _EditSignUpState extends State<EditSignUp> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
       child: Container(
           padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
           decoration: BoxDecoration(
@@ -79,8 +85,10 @@ class _EditSignUpState extends State<EditSignUp> {
                         borderSide: BorderSide(color: Colors.indigoAccent),
                         borderRadius: BorderRadius.all(Radius.circular(30.0))),
                     hintText: "닉네임",
-                    hintStyle: TextStyle(color: Colors.grey), contentPadding: EdgeInsets.all(10.0)),
+                    hintStyle: TextStyle(color: Colors.grey),
+                    contentPadding: EdgeInsets.all(10.0)),
                 controller: nickname,
+                autofocus: false,
               ),
               SizedBox(
                 height: 15.0,
@@ -98,8 +106,10 @@ class _EditSignUpState extends State<EditSignUp> {
                         borderSide: BorderSide(color: Colors.indigoAccent),
                         borderRadius: BorderRadius.all(Radius.circular(30.0))),
                     hintText: "이메일",
-                    hintStyle: TextStyle(color: Colors.grey), contentPadding: EdgeInsets.all(10.0)),
+                    hintStyle: TextStyle(color: Colors.grey),
+                    contentPadding: EdgeInsets.all(10.0)),
                 controller: email,
+                autofocus: false,
               ),
               SizedBox(
                 height: 15.0,
@@ -117,8 +127,10 @@ class _EditSignUpState extends State<EditSignUp> {
                         borderSide: BorderSide(color: Colors.indigoAccent),
                         borderRadius: BorderRadius.all(Radius.circular(30.0))),
                     hintText: "비밀번호",
-                    hintStyle: TextStyle(color: Colors.grey), contentPadding: EdgeInsets.all(10.0)),
+                    hintStyle: TextStyle(color: Colors.grey),
+                    contentPadding: EdgeInsets.all(10.0)),
                 controller: password1,
+                autofocus: false,
               ),
               SizedBox(
                 height: 15.0,
@@ -136,8 +148,10 @@ class _EditSignUpState extends State<EditSignUp> {
                         borderSide: BorderSide(color: Colors.indigoAccent),
                         borderRadius: BorderRadius.all(Radius.circular(30.0))),
                     hintText: "비밀번호 확인",
-                    hintStyle: TextStyle(color: Colors.grey), contentPadding: EdgeInsets.all(10.0)),
+                    hintStyle: TextStyle(color: Colors.grey),
+                    contentPadding: EdgeInsets.all(10.0)),
                 controller: password2,
+                autofocus: false,
               ),
               SizedBox(
                 height: 20.0,
@@ -148,11 +162,9 @@ class _EditSignUpState extends State<EditSignUp> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0))),
                 onPressed: () async {
-                  String uid = _auth.currentUser!.uid;
-
-                  print(uid);
-
-                  await _auth.currentUser!.delete();
+                  // String uid = _auth.currentUser!.uid;
+                  // print(uid);
+                  // await _auth.currentUser!.delete();
 
                   // try {
                   //   final newUser = await _auth.createUserWithEmailAndPassword(
