@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:metagamer/change_page.dart';
 import 'package:metagamer/current_route.dart';
 import 'package:metagamer/login/email_login.dart';
@@ -24,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [CustomAppbar(), Login(), BottomNav()],
+              children: [CustomAppbar(), Login(), KeyboardVisibilityProvider(child: BottomNav())],
             ),
           ),
         ),

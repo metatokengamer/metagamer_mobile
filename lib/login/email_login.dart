@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:metagamer/current_route.dart';
 
 import '../appbar.dart';
@@ -16,7 +17,7 @@ class EmailLogin extends StatelessWidget {
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [CustomAppbar(), EditEmailLogin(), BottomNav()],
+              children: [CustomAppbar(), EditEmailLogin(), KeyboardVisibilityProvider(child: BottomNav())],
             ),
           ),
         ),

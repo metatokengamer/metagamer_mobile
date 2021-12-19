@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:metagamer/appbar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:metagamer/current_route.dart';
@@ -80,7 +81,7 @@ class HomePage extends StatelessWidget {
             children: [
               CustomAppbar(),
               MainPage(),
-              BottomNav()
+              KeyboardVisibilityProvider(child: BottomNav())
             ],
           ),
         ),

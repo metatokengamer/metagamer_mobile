@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({Key? key}) : super(key: key);
@@ -8,6 +9,29 @@ class BottomNav extends StatefulWidget {
 }
 
 class _BottomNavState extends State<BottomNav> {
+  @override
+  Widget build(BuildContext context) {
+    final bool isKeyboardVisible = KeyboardVisibilityProvider.isKeyboardVisible(context);
+    if (isKeyboardVisible) {
+      print("활성");
+      return Bottomh();
+    } else {
+      print("비활성");
+      return Bottom();
+    }
+
+    // return Bottom();
+  }
+}
+
+class Bottom extends StatefulWidget {
+  const Bottom({Key? key}) : super(key: key);
+
+  @override
+  State<Bottom> createState() => _BottomState();
+}
+
+class _BottomState extends State<Bottom> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -20,5 +44,19 @@ class _BottomNavState extends State<BottomNav> {
         OutlinedButton(onPressed: () {}, child: Text("home5")),
       ],
     );
+  }
+}
+
+class Bottomh extends StatefulWidget {
+  const Bottomh({Key? key}) : super(key: key);
+
+  @override
+  _BottomhState createState() => _BottomhState();
+}
+
+class _BottomhState extends State<Bottomh> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(height: 0.0,);
   }
 }
