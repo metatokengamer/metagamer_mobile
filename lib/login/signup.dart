@@ -14,11 +14,13 @@ class SignUp extends StatelessWidget {
     return SafeArea(
       child: WillPopScope(
         child: Scaffold(
+          // endDrawerEnableOpenDragGesture: false,
+          // drawerEnableOpenDragGesture: false,
           body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomAppbar(),
-              SingleChildScrollView(child: EditSignUp()),
+              EditSignUp(),
               KeyboardVisibilityProvider(child: BottomNav()),
             ],
           ),
@@ -46,11 +48,6 @@ class _EditSignUpState extends State<EditSignUp> {
   TextEditingController email = TextEditingController();
   TextEditingController password1 = TextEditingController();
   TextEditingController password2 = TextEditingController();
-
-  String text1 = "";
-  String text2 = "";
-  String text3 = "";
-  String text4 = "";
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +90,7 @@ class _EditSignUpState extends State<EditSignUp> {
                     controller: nickname,
                     autofocus: false,
                   ),
-                  UnderText(text: text1),
+                  UnderText(text: ""),
                   TextField(
                     decoration: InputDecoration(
                         prefixIcon: Icon(
@@ -112,7 +109,7 @@ class _EditSignUpState extends State<EditSignUp> {
                     controller: email,
                     autofocus: false,
                   ),
-                  UnderText(text: text2),
+                  UnderText(text: ""),
                   TextField(
                     decoration: InputDecoration(
                         prefixIcon: Icon(
@@ -131,7 +128,7 @@ class _EditSignUpState extends State<EditSignUp> {
                     controller: password1,
                     autofocus: false,
                   ),
-                  UnderText(text: text3),
+                  UnderText(text: ""),
                   TextField(
                     decoration: InputDecoration(
                         prefixIcon: Icon(
@@ -150,7 +147,7 @@ class _EditSignUpState extends State<EditSignUp> {
                     controller: password2,
                     autofocus: false,
                   ),
-                  UnderText(text: text4),
+                  UnderText(text: ""),
                   SizedBox(
                     height: 20.0,
                   ),
@@ -178,19 +175,17 @@ class _EditSignUpState extends State<EditSignUp> {
                       // } catch (e) {
                       //   print(e);
                       // }
+
                     },
-                    child: Text("가입"),
+                    child: Text("완료"),
                   ),
                 ],
               )),
         SizedBox(
-          height: 15,
+          height: 20,
         ),
-        TextButton(onPressed: () {}, child: Text("개인정보보호정책")),
-        // SizedBox(
-        //   height: 10,
-        // ),
-        TextButton(onPressed: () {}, child: Text("서비스이용약관"))
+        SizedBox(height: 30, child: TextButton(onPressed: () {}, child: Text("개인정보보호정책"))),
+        SizedBox(height: 30,child: TextButton(onPressed: () {}, child: Text("서비스이용약관")))
       ],
     );
   }

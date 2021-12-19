@@ -25,7 +25,11 @@ class _LoginScreenState extends State<LoginScreen> {
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [CustomAppbar(), Login(), KeyboardVisibilityProvider(child: BottomNav())],
+              children: [
+                CustomAppbar(),
+                Login(),
+                KeyboardVisibilityProvider(child: BottomNav())
+              ],
             ),
           ),
         ),
@@ -47,7 +51,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -55,6 +58,8 @@ class _LoginState extends State<Login> {
         padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Column(
           children: [
+            Text("Meta Gamer", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
+            SizedBox(height: 35),
             LoginScreenButton(
                 color: Colors.white,
                 image: Padding(
@@ -84,24 +89,25 @@ class _LoginState extends State<Login> {
                   style: TextStyle(color: Colors.black),
                 ),
                 onPressed: () {
-                  Navigator.push(context, PageRouteBuilder(pageBuilder: (_, __, ___) => EmailLogin(), transitionDuration: Duration.zero));
+                  Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                          pageBuilder: (_, __, ___) => EmailLogin(),
+                          transitionDuration: Duration.zero));
                 }),
             SizedBox(
-              height: 20.0,
+              height: 40.0,
             ),
-            LoginScreenButton(
-                color: Colors.indigoAccent,
-                image: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15.0, horizontal: 10.0),
-                    child: Icon(Icons.account_circle)),
-                text: Text(
-                  "회원가입",
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () {
-                  Navigator.push(context, PageRouteBuilder(pageBuilder: (_, __, ___) => SignUp(), transitionDuration: Duration.zero));
-                })
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("계정이 없으신가요? "),
+                TextButton(
+                  onPressed: () {Navigator.push(context, PageRouteBuilder(pageBuilder: (_, __, ___) => SignUp(), transitionDuration: Duration.zero));},
+                  child: Text("회원가입", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                )
+              ],
+            )
           ],
         ),
       ),

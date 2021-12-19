@@ -13,10 +13,8 @@ class _BottomNavState extends State<BottomNav> {
   Widget build(BuildContext context) {
     final bool isKeyboardVisible = KeyboardVisibilityProvider.isKeyboardVisible(context);
     if (isKeyboardVisible) {
-      print("활성");
       return Bottomh();
     } else {
-      print("비활성");
       return Bottom();
     }
 
