@@ -3,8 +3,8 @@ import 'package:metagamer/change_page.dart';
 import 'package:metagamer/current_route.dart';
 import 'package:metagamer/login/email_login.dart';
 
-import 'appbar.dart';
-import 'bottom_nav.dart';
+import '../appbar.dart';
+import '../bottom_nav.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -29,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         onWillPop: () {
           currentRoute = CurrentRoute.home;
+          //여기서 홈으로 task 지우고 돌아가는 코드 짜기
           return Future.value(true);
         },
       ),
@@ -81,11 +82,6 @@ class _LoginState extends State<Login> {
                   style: TextStyle(color: Colors.black),
                 ),
                 onPressed: () {
-                  print(ModalRoute.of(context)!.settings.name);
-                  // goToEmailLogin();
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) => EmailLogin()));
-                  // Navigator.pushNamed(context, "/login/email_login");
-
                   Navigator.push(context, PageRouteBuilder(pageBuilder: (_, __, ___) => EmailLogin(), transitionDuration: Duration.zero));
                 }),
             SizedBox(

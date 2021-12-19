@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:metagamer/login/email_login.dart';
 
-import 'login_screen.dart';
+import 'login/login_screen.dart';
 
 Route goToLogin() {
   return PageRouteBuilder(

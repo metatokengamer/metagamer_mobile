@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:metagamer/change_page.dart';
 import 'package:metagamer/current_route.dart';
-import 'package:metagamer/login_screen.dart';
+import 'package:metagamer/login/login_screen.dart';
 
 class CustomAppbar extends StatefulWidget {
   const CustomAppbar({Key? key}) : super(key: key);

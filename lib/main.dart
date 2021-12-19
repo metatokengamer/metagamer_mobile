@@ -6,7 +6,7 @@ import 'package:metagamer/login/email_login.dart';
 import 'package:metagamer/main_page.dart';
 
 import 'bottom_nav.dart';
-import 'login_screen.dart';
+import 'login/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -13,6 +13,7 @@ class MainPage extends StatelessWidget {
             FirstBoad(),
             FirstBoad(),
             FirstBoad(),
+            FirstBoad(),
           ],
         ),
       ),

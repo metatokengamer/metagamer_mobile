@@ -11,13 +11,19 @@ class EmailLogin extends StatelessWidget {
   Widget build(BuildContext context) {
     setRoute(3);
     return SafeArea(
-      child: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [CustomAppbar(), EditEmailLogin(), BottomNav()],
+      child: WillPopScope(
+        child: Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [CustomAppbar(), EditEmailLogin(), BottomNav()],
+            ),
           ),
         ),
+        onWillPop: () {
+          currentRoute = CurrentRoute.login;
+          return Future.value(true);
+        },
       ),
     );
   }
