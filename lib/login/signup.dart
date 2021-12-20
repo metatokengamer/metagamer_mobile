@@ -6,24 +6,36 @@ import '../appbar.dart';
 import '../bottom_nav.dart';
 import '../current_route.dart';
 
-class SignUp extends StatelessWidget {
+class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
 
+  @override
+  State<SignUp> createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: WillPopScope(
         child: Scaffold(
-          // endDrawerEnableOpenDragGesture: false,
-          // drawerEnableOpenDragGesture: false,
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomAppbar(),
-              EditSignUp(),
-              KeyboardVisibilityProvider(child: BottomNav()),
-            ],
-          ),
+          body: Stack(
+              children: [
+                Positioned(
+                  child: CustomAppbar(),
+                  top: 0,
+                  right: 0,
+                  left: 0,
+                ),
+                Center(child: KeyboardVisibilityProvider(child: EditSignUp())),
+                Positioned(
+                  child: KeyboardVisibilityProvider(child: BottomNav()),
+                  bottom: 0,
+                  right: 0,
+                  left: 0,
+                ),
+              ],
+            ),
         ),
         onWillPop: () {
           currentRoute = CurrentRoute.login;
@@ -51,149 +63,168 @@ class _EditSignUpState extends State<EditSignUp> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20.0),
-              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                        spreadRadius: 1,
-                        blurRadius: 1,
-                        offset: Offset(1, 1),
-                        color: Colors.grey)
-                  ]),
-              child: Column(
-                children: [
-                  Text('회원가입'),
-                  SizedBox(
-                    height: 15.0,
-                  ),
-                  TextField(
-                    decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.account_circle,
-                          color: Colors.grey,
+    final bool isKeyboardVisible = KeyboardVisibilityProvider.isKeyboardVisible(context);
+    return Padding(
+      padding: isKeyboardVisible ? EdgeInsets.only(top: 70.0) : EdgeInsets.all(0.0),
+      child: SingleChildScrollView(
+        child: Center(
+          child: Column(
+              children: [
+                Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                              spreadRadius: 1,
+                              blurRadius: 1,
+                              offset: Offset(1, 1),
+                              color: Colors.grey)
+                        ]),
+                    child: Column(
+                      children: [
+                        Text('회원가입'),
+                        SizedBox(
+                          height: 15.0,
                         ),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey),
-                            borderRadius: BorderRadius.all(Radius.circular(30.0))),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.indigoAccent),
-                            borderRadius: BorderRadius.all(Radius.circular(30.0))),
-                        hintText: "닉네임",
-                        hintStyle: TextStyle(color: Colors.grey),
-                        contentPadding: EdgeInsets.all(10.0)),
-                    controller: nickname,
-                    autofocus: false,
-                  ),
-                  UnderText(text: ""),
-                  TextField(
-                    decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.email_rounded,
-                          color: Colors.grey,
+                        TextField(
+                          decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.account_circle,
+                                color: Colors.grey,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0))),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.indigoAccent),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0))),
+                              hintText: "닉네임",
+                              hintStyle: TextStyle(color: Colors.grey),
+                              contentPadding: EdgeInsets.all(10.0)),
+                          controller: nickname,
+                          autofocus: false,
                         ),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey),
-                            borderRadius: BorderRadius.all(Radius.circular(30.0))),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.indigoAccent),
-                            borderRadius: BorderRadius.all(Radius.circular(30.0))),
-                        hintText: "이메일",
-                        hintStyle: TextStyle(color: Colors.grey),
-                        contentPadding: EdgeInsets.all(10.0)),
-                    controller: email,
-                    autofocus: false,
-                  ),
-                  UnderText(text: ""),
-                  TextField(
-                    decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.password,
-                          color: Colors.grey,
+                        UnderText(text: ""),
+                        TextField(
+                          decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.email_rounded,
+                                color: Colors.grey,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0))),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.indigoAccent),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0))),
+                              hintText: "이메일",
+                              hintStyle: TextStyle(color: Colors.grey),
+                              contentPadding: EdgeInsets.all(10.0)),
+                          controller: email,
+                          autofocus: false,
                         ),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey),
-                            borderRadius: BorderRadius.all(Radius.circular(30.0))),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.indigoAccent),
-                            borderRadius: BorderRadius.all(Radius.circular(30.0))),
-                        hintText: "비밀번호",
-                        hintStyle: TextStyle(color: Colors.grey),
-                        contentPadding: EdgeInsets.all(10.0)),
-                    controller: password1,
-                    autofocus: false,
-                  ),
-                  UnderText(text: ""),
-                  TextField(
-                    decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.password,
-                          color: Colors.grey,
+                        UnderText(text: ""),
+                        TextField(
+                          decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.password,
+                                color: Colors.grey,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0))),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.indigoAccent),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0))),
+                              hintText: "비밀번호",
+                              hintStyle: TextStyle(color: Colors.grey),
+                              contentPadding: EdgeInsets.all(10.0)),
+                          controller: password1,
+                          autofocus: false,
                         ),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey),
-                            borderRadius: BorderRadius.all(Radius.circular(30.0))),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.indigoAccent),
-                            borderRadius: BorderRadius.all(Radius.circular(30.0))),
-                        hintText: "비밀번호 확인",
-                        hintStyle: TextStyle(color: Colors.grey),
-                        contentPadding: EdgeInsets.all(10.0)),
-                    controller: password2,
-                    autofocus: false,
-                  ),
-                  UnderText(text: ""),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        primary: Colors.indigo,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0))),
-                    onPressed: () async {
-                      // String uid = _auth.currentUser!.uid;
-                      // print(uid);
-                      // await _auth.currentUser!.delete();
+                        UnderText(text: ""),
+                        TextField(
+                          decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.password,
+                                color: Colors.grey,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0))),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.indigoAccent),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0))),
+                              hintText: "비밀번호 확인",
+                              hintStyle: TextStyle(color: Colors.grey),
+                              contentPadding: EdgeInsets.all(10.0)),
+                          controller: password2,
+                          autofocus: false,
+                        ),
+                        UnderText(text: ""),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.indigo,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0))),
+                          onPressed: () async {
+                            // String uid = _auth.currentUser!.uid;
+                            // print(uid);
+                            // await _auth.currentUser!.delete();
 
-                      // try {
-                      //   final newUser = await _auth.createUserWithEmailAndPassword(
-                      //     email: email.text,
-                      //     password: password.text,
-                      //   );
-                      // } on FirebaseAuthException catch (e) {
-                      //   if (e.code == 'weak-password') {
-                      //     print('The password provided is too weak.');
-                      //   } else if (e.code == 'email-already-in-use') {
-                      //     print('The account already exists for that email.');
-                      //   }
-                      // } catch (e) {
-                      //   print(e);
-                      // }
-
-                    },
-                    child: Text("완료"),
-                  ),
-                ],
-              )),
-        SizedBox(
-          height: 20,
+                            // try {
+                            //   final newUser = await _auth.createUserWithEmailAndPassword(
+                            //     email: email.text,
+                            //     password: password.text,
+                            //   );
+                            // } on FirebaseAuthException catch (e) {
+                            //   if (e.code == 'weak-password') {
+                            //     print('The password provided is too weak.');
+                            //   } else if (e.code == 'email-already-in-use') {
+                            //     print('The account already exists for that email.');
+                            //   }
+                            // } catch (e) {
+                            //   print(e);
+                            // }
+                          },
+                          child: Text("완료"),
+                        ),
+                      ],
+                    )),
+                SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                    height: 30,
+                    child: TextButton(onPressed: () {}, child: Text("개인정보보호정책"))),
+                SizedBox(
+                    height: 30,
+                    child: TextButton(onPressed: () {}, child: Text("서비스이용약관")))
+              ],
+            ),
         ),
-        SizedBox(height: 30, child: TextButton(onPressed: () {}, child: Text("개인정보보호정책"))),
-        SizedBox(height: 30,child: TextButton(onPressed: () {}, child: Text("서비스이용약관")))
-      ],
+      ),
     );
   }
 }
 
-
 class UnderText extends StatefulWidget {
   final String text;
+
   const UnderText({Key? key, required this.text}) : super(key: key);
 
   @override
@@ -207,7 +238,10 @@ class _UnderTextState extends State<UnderText> {
       padding: EdgeInsets.only(top: 3.0, left: 10.0, bottom: 5.0),
       child: Row(
         children: [
-          Text(widget.text, style: TextStyle(fontSize: 15, color: Colors.red),)
+          Text(
+            widget.text,
+            style: TextStyle(fontSize: 15, color: Colors.red),
+          )
         ],
       ),
     );
