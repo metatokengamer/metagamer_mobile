@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../appbar.dart';
 import '../bottom_nav.dart';
@@ -153,6 +154,7 @@ class SignUpGoogle extends StatefulWidget {
 }
 
 class _SignUpGoogleState extends State<SignUpGoogle> {
+  final _auth = FirebaseAuth.instance;
   TextEditingController nickname = TextEditingController();
 
   @override
@@ -186,10 +188,17 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                     primary: Colors.grey[100],
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25.0))),
-                onPressed: () {
-                  if (nickname.toString().length < 2) {
-                    print("nickname is weak");
-                  }
+                onPressed: () async {
+
+
+
+                  signInWithGoogle(); //가입, 로그인
+
+                  // await GoogleSignIn().disconnect();
+                  // _auth.currentUser!.delete();
+                  // _auth.signOut();
+
+                  // setState(() {});
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -216,10 +225,25 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                     )
                   ],
                 ),
-              ))
+              )),
+          SizedBox(height:30),
+          TextButton(onPressed: () async {await GoogleSignIn().disconnect();_auth.signOut();}, child: Text("로그아웃")),
+          TextButton(onPressed: () async {await GoogleSignIn().disconnect();_auth.currentUser!.delete();}, child: Text("삭제"),)
         ],
       ),
     );
+  }
+
+  Future<UserCredential> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+    print("okok" + googleUser.email);
+    
+    final OAuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 }
 
