@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:metagamer/model/first_login_model.dart';
 
 import '../appbar.dart';
 import '../bottom_nav.dart';
@@ -101,10 +103,23 @@ class _EditSignUpState extends State<EditSignUp> {
                           },
                           child: Column(
                             children: [
-                              Text("Google 가입", style: TextStyle(fontWeight: isGoogleLoginPage ? FontWeight.bold : FontWeight.normal)),
+                              Text("Google 가입",
+                                  style: TextStyle(
+                                      fontWeight: isGoogleLoginPage
+                                          ? FontWeight.bold
+                                          : FontWeight.normal)),
                               SizedBox(height: 3.0),
-                              isGoogleLoginPage ? Container(height: 3, width: 60, color: Colors.orangeAccent,) :
-                              Container(height: 3, width: 60, color: Colors.transparent,)
+                              isGoogleLoginPage
+                                  ? Container(
+                                      height: 3,
+                                      width: 60,
+                                      color: Colors.orangeAccent,
+                                    )
+                                  : Container(
+                                      height: 3,
+                                      width: 60,
+                                      color: Colors.transparent,
+                                    )
                             ],
                           ),
                         ),
@@ -116,10 +131,23 @@ class _EditSignUpState extends State<EditSignUp> {
                           },
                           child: Column(
                             children: [
-                              Text("Email 가입", style: TextStyle(fontWeight: !isGoogleLoginPage ? FontWeight.bold : FontWeight.normal)),
+                              Text("Email 가입",
+                                  style: TextStyle(
+                                      fontWeight: !isGoogleLoginPage
+                                          ? FontWeight.bold
+                                          : FontWeight.normal)),
                               SizedBox(height: 3.0),
-                              !isGoogleLoginPage ? Container(height: 3, width: 60, color: Colors.orangeAccent,) :
-                              Container(height: 3, width: 60, color: Colors.transparent,)
+                              !isGoogleLoginPage
+                                  ? Container(
+                                      height: 3,
+                                      width: 60,
+                                      color: Colors.orangeAccent,
+                                    )
+                                  : Container(
+                                      height: 3,
+                                      width: 60,
+                                      color: Colors.transparent,
+                                    )
                             ],
                           ),
                         )
@@ -160,26 +188,36 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400,
+      // height: 400,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          TextField(decoration: InputDecoration(
-              prefixIcon: Icon(
-                Icons.account_circle,
-                color: Colors.grey,
-              ),
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
-                  borderRadius: BorderRadius.all(Radius.circular(30.0))),
-              focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.indigoAccent),
-                  borderRadius: BorderRadius.all(Radius.circular(30.0))),
-              hintText: "닉네임",
-              hintStyle: TextStyle(color: Colors.grey),
-              contentPadding: EdgeInsets.all(10.0)),
+          TextField(
+            decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.account_circle,
+                  color: Colors.grey,
+                ),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                    borderRadius: BorderRadius.all(Radius.circular(30.0))),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.indigoAccent),
+                    borderRadius: BorderRadius.all(Radius.circular(30.0))),
+                hintText: "닉네임",
+                hintStyle: TextStyle(color: Colors.grey),
+                contentPadding: EdgeInsets.all(10.0)),
             controller: nickname,
-            autofocus: false,),
+            autofocus: false,
+          ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, top: 7.0),
+                child: Text("한글2자이상", style: TextStyle(color: Colors.grey[600])),
+              ),
+            ],
+          ),
           SizedBox(height: 50.0),
           ButtonTheme(
               height: 50.0,
@@ -189,16 +227,11 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25.0))),
                 onPressed: () async {
+                  if (nickname.text.length < 2) {
 
-
-
-                  signInWithGoogle(); //가입, 로그인
-
-                  // await GoogleSignIn().disconnect();
-                  // _auth.currentUser!.delete();
-                  // _auth.signOut();
-
-                  // setState(() {});
+                  } else {
+                    signInWithGoogle(); //가입, 로그인
+                  }
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -211,7 +244,8 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                         height: 20.0,
                       ),
                     ),
-                    Text("Google 아이디로 가입", style: TextStyle(color: Colors.black)),
+                    Text("Google 아이디로 가입",
+                        style: TextStyle(color: Colors.black)),
                     Opacity(
                       opacity: 0.0,
                       child: Padding(
@@ -226,24 +260,54 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                   ],
                 ),
               )),
-          SizedBox(height:30),
-          TextButton(onPressed: () async {await GoogleSignIn().disconnect();_auth.signOut();}, child: Text("로그아웃")),
-          TextButton(onPressed: () async {await GoogleSignIn().disconnect();_auth.currentUser!.delete();}, child: Text("삭제"),)
+          SizedBox(height: 30),
+          TextButton(
+              onPressed: () async {
+                await GoogleSignIn().disconnect();
+                await _auth.signOut();
+              },
+              child: Text("로그아웃")),
+          TextButton(
+            onPressed: () async {
+              await GoogleSignIn().disconnect();
+              await _auth.currentUser!.delete();
+            },
+            child: Text("삭제"),
+          )
         ],
       ),
     );
   }
 
-  Future<UserCredential> signInWithGoogle() async {
+  Future<bool> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser!.authentication;
     print("okok" + googleUser.email);
-    
+
     final OAuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    // return await FirebaseAuth.instance.signInWithCredential(credential);
+    final userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    final isNew = userCredential.additionalUserInfo!.isNewUser;
+    print(isNew);
+
+    if (isNew) {
+      CollectionReference reference =
+          await FirebaseFirestore.instance.collection("user");
+      String defaultIconUrl =
+          "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/dev%2Fdefaultprofileicon.png?alt=media&token=cee38d5d-48b1-4e85-bbe0-d3114c07959a";
+      FirstLoginModel model = FirstLoginModel(
+          email: _auth.currentUser!.email.toString(),
+          nickname: nickname.text,
+          defaulticon: defaultIconUrl);
+      await reference.doc(_auth.currentUser!.email).set(model.toJson());
+    }
+
+    return isNew;
   }
 }
 
@@ -263,7 +327,7 @@ class _SignUpEmailState extends State<SignUpEmail> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400,
+      // height: 400,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

@@ -25,7 +25,7 @@ class _AppBarState extends State<CustomAppbar> {
           Icon(Icons.menu),
           Text("MetaGamer"),
           _auth.currentUser == null ? Login() : LoginAready()
-          // Login()
+          // _auth.currentUser == null ? Login() : Login()
         ],
       ),
     );
@@ -40,7 +40,9 @@ class LoginAready extends StatelessWidget {
     return Container(
       height: 50,
       width: 50,
-      child: CircleAvatar(radius: 50, backgroundColor: Colors.grey),
+      child: GestureDetector(onTap: () {if (currentRoute != CurrentRoute.login && currentRoute != CurrentRoute.emailLogin && currentRoute != CurrentRoute.signup) {
+        Navigator.push(context, PageRouteBuilder(pageBuilder: (_, __, ___) => LoginScreen(), transitionDuration: Duration.zero));
+      }},child: CircleAvatar(radius: 50, backgroundColor: Colors.grey)),
     );
   }
 }
