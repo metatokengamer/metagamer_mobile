@@ -456,13 +456,13 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
 
               TextButton(
                   onPressed: () async {
-                    await GoogleSignIn().disconnect();
+                    // await GoogleSignIn().disconnect();
                     await _auth.signOut();
                   },
                   child: Text("로그아웃")),
               TextButton(
                 onPressed: () async {
-                  await GoogleSignIn().disconnect();
+                  // await GoogleSignIn().disconnect();
                   await _auth.currentUser!.delete();
                 },
                 child: Text("삭제"),
@@ -936,6 +936,20 @@ class _SignUpEmailState extends State<SignUpEmail> {
             },
             child: Text("가입"),
           ),
+          TextButton(onPressed: () async {
+            try {
+              UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  email: email.text,
+                  password: password1.text
+              );
+            } on FirebaseAuthException catch (e) {
+              if (e.code == 'user-not-found') {
+                print('No user found for that email.');
+              } else if (e.code == 'wrong-password') {
+                print('Wrong password provided for that user.');
+              }
+            }
+          }, child: Text("로그인"))
         ],
       ),
     );
