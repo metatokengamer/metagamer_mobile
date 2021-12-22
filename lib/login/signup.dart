@@ -282,7 +282,9 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
             ],
           ),
           SizedBox(height: 15.0),
-          Text("약관 동의 후 가입이 가능합니다.", style: TextStyle(color: isAccept ? Colors.transparent : Colors.red)),
+          Text("약관 동의 후 가입이 가능합니다.",
+              style:
+                  TextStyle(color: isAccept ? Colors.transparent : Colors.red)),
           SizedBox(height: 15.0),
           Container(
             height: 1,
@@ -298,7 +300,8 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                     setState(() {
                       nicknametext = "";
                     });
-                  } else if (text.length <= 10 && nicknametext == "10글자를 초과합니다") {
+                  } else if (text.length <= 10 &&
+                      nicknametext == "10글자를 초과합니다") {
                     setState(() {
                       nicknametext = "";
                     });
@@ -334,8 +337,8 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0, top: 4.0),
-                    child: Text(nicknametext,
-                        style: TextStyle(color: Colors.red)),
+                    child:
+                        Text(nicknametext, style: TextStyle(color: Colors.red)),
                   ),
                 ],
               ),
@@ -480,14 +483,20 @@ class _SignUpEmailState extends State<SignUpEmail> {
   Widget nicknamegood = Text("2~10자리 한글, 영문, 숫자만 가능합니다.",
       style: TextStyle(color: Colors.black54));
 
-  Widget nicknameunder2 = Text("2자리보다 적습니다.",
-      style: TextStyle(color: Colors.red));
+  Widget nicknameunder2 =
+      Text("2자리보다 적습니다.", style: TextStyle(color: Colors.red));
 
-  Widget nicknamemore10 = Text("10자리를 초과합니다.",
-      style: TextStyle(color: Colors.red));
+  Widget nicknamemore10 =
+      Text("10자리를 초과합니다.", style: TextStyle(color: Colors.red));
 
-  Widget nicknamenogood = Text("올바른 닉네임을 입력해주세요.",
-      style: TextStyle(color: Colors.red));
+  Widget nicknamenogood =
+      Text("올바른 닉네임을 입력해주세요.", style: TextStyle(color: Colors.red));
+
+  Widget nicknamespecial =
+      Text("특수문자는 사용할 수 없습니다.", style: TextStyle(color: Colors.red));
+
+  Widget nicknamespacebar =
+      Text("공백이 포함될 수 없습니다.", style: TextStyle(color: Colors.red));
 
   @override
   Widget build(BuildContext context) {
@@ -586,7 +595,9 @@ class _SignUpEmailState extends State<SignUpEmail> {
             ],
           ),
           SizedBox(height: 15.0),
-          Text("약관 동의 후 가입이 가능합니다.", style: TextStyle(color: isAccept ? Colors.transparent : Colors.red)),
+          Text("약관 동의 후 가입이 가능합니다.",
+              style:
+                  TextStyle(color: isAccept ? Colors.transparent : Colors.red)),
           SizedBox(height: 15.0),
           Container(
             height: 1,
@@ -622,7 +633,17 @@ class _SignUpEmailState extends State<SignUpEmail> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 20.0, top: 5.0),
-                child: nicknamenum == 1 ? nicknamegood : nickname == 2 ? nicknameunder2  : nicknamenum == 3 ? nicknamemore10 : nicknamenogood,
+                child: nicknamenum == 1
+                    ? nicknamegood
+                    : nicknamenum == 2
+                        ? nicknameunder2
+                        : nicknamenum == 3
+                            ? nicknamemore10
+                            : nicknamenum == 4
+                                ? nicknamenogood
+                                : nicknamenum == 5
+                                    ? nicknamespecial
+                                    : nicknamespacebar,
               ),
             ],
           ),
@@ -720,6 +741,22 @@ class _SignUpEmailState extends State<SignUpEmail> {
               //   print(e);
               // }
 
+              // String s = "아 아";
+              // var regex = new RegExp(r'^[ㄱ-ㅎ ㅏ-ㅣ]+$');
+              // var regex1 = new RegExp(r'^[!@#$%^&*(),.?":{}|<>]+$');
+              // var regex2 = new RegExp(r'^[a-zA-Z0-9_\-=@,\.;]+$');
+              // var allMatches = regex.allMatches(s);
+              //
+              // // bool specialChar = s.contains(new RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+              // bool specialChar1 = s.contains(new RegExp(r'[ㄱ-ㅎㅏ-ㅣ]+'));//성공!!!
+              // print(specialChar1);
+
+              // if (allMatches.isNotEmpty) {
+              //   print("111");
+              // } else {
+              //   print("222");
+              // }
+
               if (!isChecked2 || !isChecked3) {
                 setState(() {
                   isAccept = false;
@@ -732,13 +769,28 @@ class _SignUpEmailState extends State<SignUpEmail> {
                 setState(() {
                   nicknamenum = 3;
                 });
-              } else if (nickname.text.contains(nickname.text)) {//여기서 자모음, 공백, 특수문자 확인
+              } else if (nickname.text.contains(new RegExp(r'[ㄱ-ㅎㅏ-ㅣ]+'))) {
                 setState(() {
                   nicknamenum = 4;
+                });
+              } else if (nickname.text
+                  .contains(new RegExp(r'[!@#$%^&*(),.?":{}|<>]+'))) {
+                setState(() {
+                  nicknamenum = 5;
+                });
+              } else if (nickname.text.contains(new RegExp(r'[ ]+'))) {
+                setState(() {
+                  nicknamenum = 6;
                 });
               } else {
                 print("정상");
               }
+
+              // if (RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+.[a-zA-Z]+").hasMatch(email.text)) {
+              //   print("정상");
+              // } else {
+              //   print("오류");
+              // }
             },
             child: Text("가입"),
           ),
