@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:intl/intl.dart';
 import 'package:metagamer/model/first_login_model.dart';
 
 import '../appbar.dart';
@@ -72,7 +73,8 @@ class _EditSignUpState extends State<EditSignUp> {
         KeyboardVisibilityProvider.isKeyboardVisible(context);
     return Padding(
       padding:
-          isKeyboardVisible ? EdgeInsets.only(top: 70.0) : EdgeInsets.all(0.0),
+          // isKeyboardVisible ? EdgeInsets.only(top: 70.0) : EdgeInsets.all(0.0),
+      isKeyboardVisible ? EdgeInsets.only(top: 70.0) : EdgeInsets.symmetric(vertical: 70.0),
       child: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -205,7 +207,7 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
 
       child: Column(
         children: [
-          SizedBox(height: 30.0),
+          SizedBox(height: 10.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -294,16 +296,16 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                       )))
             ],
           ),
-          SizedBox(height: 15.0),
+          SizedBox(height: 5.0),
           Text("약관 동의 후 가입이 가능합니다.",
               style:
                   TextStyle(color: isAccept ? Colors.transparent : Colors.red)),
-          SizedBox(height: 15.0),
+          SizedBox(height: 8.0),
           Container(
             height: 1,
             color: Colors.grey[300],
           ),
-          SizedBox(height: 30.0),
+          SizedBox(height: 15.0),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -451,19 +453,20 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                     ),
                   )),
               SizedBox(height: 30),
-              // TextButton(
-              //     onPressed: () async {
-              //       await GoogleSignIn().disconnect();
-              //       await _auth.signOut();
-              //     },
-              //     child: Text("로그아웃")),
-              // TextButton(
-              //   onPressed: () async {
-              //     await GoogleSignIn().disconnect();
-              //     await _auth.currentUser!.delete();
-              //   },
-              //   child: Text("삭제"),
-              // )
+
+              TextButton(
+                  onPressed: () async {
+                    await GoogleSignIn().disconnect();
+                    await _auth.signOut();
+                  },
+                  child: Text("로그아웃")),
+              TextButton(
+                onPressed: () async {
+                  await GoogleSignIn().disconnect();
+                  await _auth.currentUser!.delete();
+                },
+                child: Text("삭제"),
+              )
             ],
           )
         ],
@@ -472,6 +475,7 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
   }
 
   Future<bool> signInWithGoogle() async {
+    String date = DateFormat('yyyy/MM/dd HH:mm:ss').format(DateTime.now());
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     final GoogleSignInAuthentication googleAuth =
         await googleUser!.authentication;
@@ -495,7 +499,9 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
       FirstLoginModel model = FirstLoginModel(
           email: _auth.currentUser!.email.toString(),
           nickname: nickname.text,
-          defaulticon: defaultIconUrl);
+          defaulticon: defaultIconUrl,
+          accept1: date,
+          accept2: date); //날짜 설정
       await reference.doc(_auth.currentUser!.email).set(model.toJson());
     }
 
@@ -511,6 +517,9 @@ class SignUpEmail extends StatefulWidget {
 }
 
 class _SignUpEmailState extends State<SignUpEmail> {
+
+  final _auth = FirebaseAuth.instance;
+
   TextEditingController nickname = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password1 = TextEditingController();
@@ -565,7 +574,7 @@ class _SignUpEmailState extends State<SignUpEmail> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(height: 30.0),
+          SizedBox(height: 10.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -654,16 +663,16 @@ class _SignUpEmailState extends State<SignUpEmail> {
                       )))
             ],
           ),
-          SizedBox(height: 15.0),
+          SizedBox(height: 5.0),
           Text("약관 동의 후 가입이 가능합니다.",
               style:
                   TextStyle(color: isAccept ? Colors.transparent : Colors.red)),
-          SizedBox(height: 15.0),
+          SizedBox(height: 8.0),
           Container(
             height: 1,
             color: Colors.grey[300],
           ),
-          SizedBox(height: 30.0),
+          SizedBox(height: 15.0),
           TextField(
             onChanged: (text) {
               if (text.length >= 2 && text.length <= 10) {
@@ -822,7 +831,7 @@ class _SignUpEmailState extends State<SignUpEmail> {
                 primary: Colors.indigo,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0))),
-            onPressed: () {
+            onPressed: () async {
               // String uid = _auth.currentUser!.uid;
               // print(uid);
               // await _auth.currentUser!.delete();
@@ -900,6 +909,22 @@ class _SignUpEmailState extends State<SignUpEmail> {
                   password2num = 1;
                   print("정상");
                 });
+                try {
+                  final newUser = await _auth.createUserWithEmailAndPassword(
+                    email: email.text,
+                    password: password1.text,
+                  );
+                  bool isNew = newUser.additionalUserInfo!.isNewUser;
+                  print(isNew);
+                } on FirebaseAuthException catch (e) {
+                  if (e.code == 'weak-password') {
+                    print('The password provided is too weak.');
+                  } else if (e.code == 'email-already-in-use') {
+                    print('The account already exists for that email.');
+                  }
+                } catch (e) {
+                  print(e);
+                }
               }
 
               // String test = "아ㅓㄹ";
