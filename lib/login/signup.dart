@@ -183,7 +183,20 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
 
   bool isAccept = true;
 
-  String nicknametext = "";
+  int nicknamenum = 1;
+  Widget nicknamegood = Text("완료", style: TextStyle(color: Colors.transparent));
+  Widget nicknamenohave =
+      Text("닉네임을 입력해주세요.", style: TextStyle(color: Colors.red));
+  Widget nicknameunder2 =
+      Text("2자리보다 적습니다.", style: TextStyle(color: Colors.red));
+  Widget nicknamemore10 =
+      Text("10자리를 초과합니다.", style: TextStyle(color: Colors.red));
+  Widget nicknamenogood =
+      Text("올바른 닉네임을 입력해주세요.", style: TextStyle(color: Colors.red));
+  Widget nicknamespecial =
+      Text("특수문자는 사용할 수 없습니다.", style: TextStyle(color: Colors.red));
+  Widget nicknamespacebar =
+      Text("공백이 포함될 수 없습니다.", style: TextStyle(color: Colors.red));
 
   @override
   Widget build(BuildContext context) {
@@ -296,14 +309,9 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
             children: [
               TextField(
                 onChanged: (text) {
-                  if (text.length >= 2 && nicknametext == "2글자보다 적습니다.") {
+                  if (text.length >= 2 && text.length <= 10) {
                     setState(() {
-                      nicknametext = "";
-                    });
-                  } else if (text.length <= 10 &&
-                      nicknametext == "10글자를 초과합니다") {
-                    setState(() {
-                      nicknametext = "";
+                      nicknamenum = 1;
                     });
                   }
                 },
@@ -337,8 +345,19 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0, top: 4.0),
-                    child:
-                        Text(nicknametext, style: TextStyle(color: Colors.red)),
+                    child: nicknamenum == 1
+                        ? nicknamegood
+                        : nicknamenum == 2
+                            ? nicknamenohave
+                            : nicknamenum == 3
+                                ? nicknameunder2
+                                : nicknamenum == 4
+                                    ? nicknamemore10
+                                    : nicknamenum == 5
+                                        ? nicknamenogood
+                                        : nicknamenum == 6
+                                            ? nicknamespecial
+                                            : nicknamespacebar,
                   ),
                 ],
               ),
@@ -365,16 +384,40 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                       // }
 
                       if (!isChecked2 || !isChecked3) {
+                        print("111");
                         setState(() {
                           isAccept = false;
                         });
-                      } else if (nickname.text.length < 2) {
+                      } else if (nickname.text.length == 0) {
                         setState(() {
-                          nicknametext = "2글자보다 적습니다.";
+                          nicknamenum = 2;
+                        });
+                      } else if (nickname.text.length < 2) {
+                        print("222");
+                        setState(() {
+                          nicknamenum = 3;
                         });
                       } else if (nickname.text.length > 10) {
+                        print("333");
                         setState(() {
-                          nicknametext = "10글자를 초과합니다";
+                          nicknamenum = 4;
+                        });
+                      } else if (nickname.text
+                          .contains(new RegExp(r'[ㄱ-ㅎㅏ-ㅣ]+'))) {
+                        print("444");
+                        setState(() {
+                          nicknamenum = 5;
+                        });
+                      } else if (nickname.text
+                          .contains(new RegExp(r'[!@#$%^&*(),.?":{}|<>]+'))) {
+                        print("555");
+                        setState(() {
+                          nicknamenum = 6;
+                        });
+                      } else if (nickname.text.contains(new RegExp(r'[ ]+'))) {
+                        print("666");
+                        setState(() {
+                          nicknamenum = 7;
                         });
                       } else {
                         signInWithGoogle();
@@ -482,21 +525,38 @@ class _SignUpEmailState extends State<SignUpEmail> {
 
   Widget nicknamegood = Text("2~10자리 한글, 영문, 숫자만 가능합니다.",
       style: TextStyle(color: Colors.black54));
-
+  Widget nicknamenohave =
+      Text("닉네임을 입력해주세요.", style: TextStyle(color: Colors.red));
   Widget nicknameunder2 =
       Text("2자리보다 적습니다.", style: TextStyle(color: Colors.red));
-
   Widget nicknamemore10 =
       Text("10자리를 초과합니다.", style: TextStyle(color: Colors.red));
-
   Widget nicknamenogood =
       Text("올바른 닉네임을 입력해주세요.", style: TextStyle(color: Colors.red));
-
   Widget nicknamespecial =
       Text("특수문자는 사용할 수 없습니다.", style: TextStyle(color: Colors.red));
-
   Widget nicknamespacebar =
       Text("공백이 포함될 수 없습니다.", style: TextStyle(color: Colors.red));
+
+  int emailnum = 1;
+  Widget emailtext = Text("완료", style: TextStyle(color: Colors.transparent));
+  Widget emailnohave =
+      Text("이메일을 입력해주세요.", style: TextStyle(color: Colors.red));
+  Widget emailnogood =
+      Text("올바른 이메일주소를 입력해주세요.", style: TextStyle(color: Colors.red));
+
+  int password1num = 1;
+  Widget passwordgood = Text("8~12자(영문, 숫자, 특수문자)로 입력할 수 있습니다.",
+      style: TextStyle(color: Colors.black54));
+  Widget passwordtext =
+      Text("8~12자(영문, 숫자, 특수문자) 확인해주세요.", style: TextStyle(color: Colors.red));
+
+  int password2num = 1;
+  Widget password2good = Text("", style: TextStyle(color: Colors.transparent));
+  Widget password2text =
+      Text("비밀번호를 한번 더 입력해주세요.", style: TextStyle(color: Colors.red));
+  Widget password2nosame =
+      Text("비밀번호가 다릅니다.", style: TextStyle(color: Colors.red));
 
   @override
   Widget build(BuildContext context) {
@@ -636,19 +696,28 @@ class _SignUpEmailState extends State<SignUpEmail> {
                 child: nicknamenum == 1
                     ? nicknamegood
                     : nicknamenum == 2
-                        ? nicknameunder2
+                        ? nicknamenohave
                         : nicknamenum == 3
-                            ? nicknamemore10
+                            ? nicknameunder2
                             : nicknamenum == 4
-                                ? nicknamenogood
+                                ? nicknamemore10
                                 : nicknamenum == 5
-                                    ? nicknamespecial
-                                    : nicknamespacebar,
+                                    ? nicknamenogood
+                                    : nicknamenum == 6
+                                        ? nicknamespecial
+                                        : nicknamespacebar,
               ),
             ],
           ),
           SizedBox(height: 15.0),
           TextField(
+            onChanged: (text) {
+              if (text.length != 0) {
+                setState(() {
+                  emailnum = 1;
+                });
+              }
+            },
             decoration: InputDecoration(
                 prefixIcon: Icon(
                   Icons.email_rounded,
@@ -669,14 +738,22 @@ class _SignUpEmailState extends State<SignUpEmail> {
           Row(
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 20.0, top: 5.0),
-                child: Text("올바른 이메일 주소를 입력해주세요.",
-                    style: TextStyle(color: Colors.black54)),
-              ),
+                  padding: const EdgeInsets.only(left: 20.0, top: 5.0),
+                  child: emailnum == 1
+                      ? emailtext
+                      : emailnum == 2
+                          ? emailnohave
+                          : emailnogood),
             ],
           ),
           SizedBox(height: 15.0),
           TextField(
+            onChanged: (text) {
+              setState(() {
+                password1num = 1;
+              });
+            },
+            obscureText: true,
             decoration: InputDecoration(
                 prefixIcon: Icon(
                   Icons.password,
@@ -694,8 +771,22 @@ class _SignUpEmailState extends State<SignUpEmail> {
             controller: password1,
             autofocus: false,
           ),
-          SizedBox(height: 30.0),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, top: 5.0),
+                child: password1num == 1 ? passwordgood : passwordtext,
+              )
+            ],
+          ),
+          SizedBox(height: 15.0),
           TextField(
+            onChanged: (text) {
+              setState(() {
+                password2num = 1;
+              });
+            },
+            obscureText: true,
             decoration: InputDecoration(
                 prefixIcon: Icon(
                   Icons.password,
@@ -713,9 +804,19 @@ class _SignUpEmailState extends State<SignUpEmail> {
             controller: password2,
             autofocus: false,
           ),
-          SizedBox(
-            height: 20.0,
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, top: 5.0),
+                child: password2num == 1
+                    ? password2good
+                    : password2num == 2
+                        ? password2text
+                        : password2nosame,
+              )
+            ],
           ),
+          SizedBox(height: 15.0),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
                 primary: Colors.indigo,
@@ -741,55 +842,71 @@ class _SignUpEmailState extends State<SignUpEmail> {
               //   print(e);
               // }
 
-              // String s = "아 아";
-              // var regex = new RegExp(r'^[ㄱ-ㅎ ㅏ-ㅣ]+$');
-              // var regex1 = new RegExp(r'^[!@#$%^&*(),.?":{}|<>]+$');
-              // var regex2 = new RegExp(r'^[a-zA-Z0-9_\-=@,\.;]+$');
-              // var allMatches = regex.allMatches(s);
-              //
-              // // bool specialChar = s.contains(new RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
-              // bool specialChar1 = s.contains(new RegExp(r'[ㄱ-ㅎㅏ-ㅣ]+'));//성공!!!
-              // print(specialChar1);
-
-              // if (allMatches.isNotEmpty) {
-              //   print("111");
-              // } else {
-              //   print("222");
-              // }
-
               if (!isChecked2 || !isChecked3) {
                 setState(() {
                   isAccept = false;
                 });
-              } else if (nickname.text.length < 2) {
+              } else if (nickname.text.length == 0) {
                 setState(() {
                   nicknamenum = 2;
                 });
-              } else if (nickname.text.length > 10) {
+              } else if (nickname.text.length < 2) {
                 setState(() {
                   nicknamenum = 3;
                 });
-              } else if (nickname.text.contains(new RegExp(r'[ㄱ-ㅎㅏ-ㅣ]+'))) {
+              } else if (nickname.text.length > 10) {
                 setState(() {
                   nicknamenum = 4;
+                });
+              } else if (nickname.text.contains(new RegExp(r'[ㄱ-ㅎㅏ-ㅣ]+'))) {
+                setState(() {
+                  nicknamenum = 5;
                 });
               } else if (nickname.text
                   .contains(new RegExp(r'[!@#$%^&*(),.?":{}|<>]+'))) {
                 setState(() {
-                  nicknamenum = 5;
+                  nicknamenum = 6;
                 });
               } else if (nickname.text.contains(new RegExp(r'[ ]+'))) {
                 setState(() {
-                  nicknamenum = 6;
+                  nicknamenum = 7;
+                });
+              } else if (email.text.length == 0) {
+                setState(() {
+                  emailnum = 2;
+                });
+              } else if (!email.text.contains(new RegExp(
+                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'))) {
+                setState(() {
+                  emailnum = 3;
+                });
+              } else if (!password1.text.contains(new RegExp(r'[a-zA-Z]+')) ||
+                  password1.text.contains(new RegExp(r'[ㄱ-ㅎㅏ-ㅣ가-힣]+')) ||
+                  password1.text.length < 6 ||
+                  password1.text.length > 12) {
+                setState(() {
+                  password1num = 2;
+                });
+              } else if (password2.text.length == 0) {
+                setState(() {
+                  password2num = 2;
+                });
+              } else if (password2.text != password1.text) {
+                setState(() {
+                  password2num = 3;
                 });
               } else {
-                print("정상");
+                setState(() {
+                  password2num = 1;
+                  print("정상");
+                });
               }
 
-              // if (RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+.[a-zA-Z]+").hasMatch(email.text)) {
-              //   print("정상");
+              // String test = "아ㅓㄹ";
+              // if (!test.contains(new RegExp(r'[a-zA-Z]+')) || test.contains(new RegExp(r'[ㄱ-ㅎㅏ-ㅣ가-힣]+')) || test.length < 6 || test.length >12) {
+              //   print("포함");
               // } else {
-              //   print("오류");
+              //   print("미보함");
               // }
             },
             child: Text("가입"),
