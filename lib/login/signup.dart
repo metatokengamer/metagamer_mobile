@@ -107,17 +107,18 @@ class _EditSignUpState extends State<EditSignUp> {
                                   style: TextStyle(
                                       fontWeight: isGoogleLoginPage
                                           ? FontWeight.bold
-                                          : FontWeight.normal)),
+                                          : FontWeight.normal,
+                                      fontSize: 17.0)),
                               SizedBox(height: 3.0),
                               isGoogleLoginPage
                                   ? Container(
                                       height: 3,
-                                      width: 60,
+                                      width: 90,
                                       color: Colors.orangeAccent,
                                     )
                                   : Container(
                                       height: 3,
-                                      width: 60,
+                                      width: 90,
                                       color: Colors.transparent,
                                     )
                             ],
@@ -135,17 +136,18 @@ class _EditSignUpState extends State<EditSignUp> {
                                   style: TextStyle(
                                       fontWeight: !isGoogleLoginPage
                                           ? FontWeight.bold
-                                          : FontWeight.normal)),
+                                          : FontWeight.normal,
+                                      fontSize: 17.0)),
                               SizedBox(height: 3.0),
                               !isGoogleLoginPage
                                   ? Container(
                                       height: 3,
-                                      width: 60,
+                                      width: 90,
                                       color: Colors.orangeAccent,
                                     )
                                   : Container(
                                       height: 3,
-                                      width: 60,
+                                      width: 90,
                                       color: Colors.transparent,
                                     )
                             ],
@@ -157,15 +159,6 @@ class _EditSignUpState extends State<EditSignUp> {
                   ],
                 ),
               ),
-              SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                  height: 30,
-                  child: TextButton(onPressed: () {}, child: Text("개인정보보호정책"))),
-              SizedBox(
-                  height: 30,
-                  child: TextButton(onPressed: () {}, child: Text("서비스이용약관")))
             ],
           ),
         ),
@@ -184,95 +177,248 @@ class SignUpGoogle extends StatefulWidget {
 class _SignUpGoogleState extends State<SignUpGoogle> {
   final _auth = FirebaseAuth.instance;
   TextEditingController nickname = TextEditingController();
+  bool isChecked1 = false;
+  bool isChecked2 = false;
+  bool isChecked3 = false;
+
+  bool isAccept = true;
+
+  String nicknametext = "";
 
   @override
   Widget build(BuildContext context) {
     return Container(
       // height: 400,
+
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          TextField(
-            decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.account_circle,
-                  color: Colors.grey,
-                ),
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                    borderRadius: BorderRadius.all(Radius.circular(30.0))),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.indigoAccent),
-                    borderRadius: BorderRadius.all(Radius.circular(30.0))),
-                hintText: "닉네임",
-                hintStyle: TextStyle(color: Colors.grey),
-                contentPadding: EdgeInsets.all(10.0)),
-            controller: nickname,
-            autofocus: false,
-          ),
+          SizedBox(height: 30.0),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 20.0, top: 7.0),
-                child: Text("한글2자이상", style: TextStyle(color: Colors.grey[600])),
+              Row(
+                children: [
+                  SizedBox(
+                      height: 35.0,
+                      child: Checkbox(
+                          value: isChecked1,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isChecked1 = value!;
+                              isChecked2 = value;
+                              isChecked3 = value;
+                              if (value == true) {
+                                isAccept = true;
+                              }
+                            });
+                          })),
+                  Text("전체 동의")
+                ],
               ),
             ],
           ),
-          SizedBox(height: 50.0),
-          ButtonTheme(
-              height: 50.0,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    primary: Colors.grey[100],
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25.0))),
-                onPressed: () async {
-                  if (nickname.text.length < 2) {
-
-                  } else {
-                    signInWithGoogle(); //가입, 로그인
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  SizedBox(
+                      height: 35.0,
+                      child: Checkbox(
+                          value: isChecked2,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isChecked2 = value!;
+                              if (isChecked2 && isChecked3) {
+                                isAccept = true;
+                              } else if (!isChecked2 || !isChecked3) {
+                                isChecked1 = false;
+                              }
+                            });
+                          })),
+                  Text("[필수] Meta Gamer 이용약관")
+                ],
+              ),
+              SizedBox(
+                  height: 35.0,
+                  child: TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        "보기",
+                        style: TextStyle(decoration: TextDecoration.underline),
+                      )))
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  SizedBox(
+                      height: 35.0,
+                      child: Checkbox(
+                          value: isChecked3,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isChecked3 = value!;
+                              if (isChecked2 && isChecked3) {
+                                isAccept = true;
+                              } else if (!isChecked2 || !isChecked3) {
+                                isChecked1 = false;
+                              }
+                            });
+                          })),
+                  Text("[필수] 개인정보수집 및 이용 동의")
+                ],
+              ),
+              SizedBox(
+                  height: 35.0,
+                  child: TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        "보기",
+                        style: TextStyle(decoration: TextDecoration.underline),
+                      )))
+            ],
+          ),
+          SizedBox(height: 15.0),
+          Text("약관 동의 후 가입이 가능합니다.", style: TextStyle(color: isAccept ? Colors.transparent : Colors.red)),
+          SizedBox(height: 15.0),
+          Container(
+            height: 1,
+            color: Colors.grey[300],
+          ),
+          SizedBox(height: 30.0),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                onChanged: (text) {
+                  if (text.length >= 2 && nicknametext == "2글자보다 적습니다.") {
+                    setState(() {
+                      nicknametext = "";
+                    });
+                  } else if (text.length <= 10 && nicknametext == "10글자를 초과합니다") {
+                    setState(() {
+                      nicknametext = "";
+                    });
                   }
                 },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15.0, horizontal: 10.0),
-                      child: Image.asset(
-                        "assets/googleicon.png",
-                        height: 20.0,
-                      ),
+                decoration: InputDecoration(
+                    prefixIcon: Icon(
+                      Icons.account_circle,
+                      color: Colors.grey,
                     ),
-                    Text("Google 아이디로 가입",
-                        style: TextStyle(color: Colors.black)),
-                    Opacity(
-                      opacity: 0.0,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 15.0, horizontal: 10.0),
-                        child: Image.asset(
-                          "assets/googleicon.png",
-                          height: 20.0,
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.all(Radius.circular(30.0))),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.indigoAccent),
+                        borderRadius: BorderRadius.all(Radius.circular(30.0))),
+                    hintText: "닉네임",
+                    hintStyle: TextStyle(color: Colors.grey),
+                    contentPadding: EdgeInsets.all(10.0)),
+                controller: nickname,
+                autofocus: false,
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0, top: 7.0),
+                    child: Text("2~10자리 한글, 영문, 숫자만 가능합니다.",
+                        style: TextStyle(color: Colors.black54)),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0, top: 4.0),
+                    child: Text(nicknametext,
+                        style: TextStyle(color: Colors.red)),
+                  ),
+                ],
+              ),
+              SizedBox(height: 30.0),
+              ButtonTheme(
+                  height: 50.0,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        primary: Colors.grey[100],
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25.0))),
+                    onPressed: () async {
+                      // if (nickname.text.length < 2 && nickname.text.length > 9 && nickname.text.contains(".*[ㄱ-ㅎ ㅏ-ㅣ]+.*")) {
+                      //   // setState(() {
+                      //   //   textColor = Colors.red;
+                      //   // });
+                      //   print("오류" + nickname.text);
+                      // } else {
+                      //   print("정상" + nickname.text);
+                      //   // setState(() {
+                      //   //   textColor = Colors.grey[100];
+                      //   // });
+                      //   // signInWithGoogle(); //가입, 로그인
+                      // }
+
+                      if (!isChecked2 || !isChecked3) {
+                        setState(() {
+                          isAccept = false;
+                        });
+                      } else if (nickname.text.length < 2) {
+                        setState(() {
+                          nicknametext = "2글자보다 적습니다.";
+                        });
+                      } else if (nickname.text.length > 10) {
+                        setState(() {
+                          nicknametext = "10글자를 초과합니다";
+                        });
+                      } else {
+                        signInWithGoogle();
+                      }
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 15.0, horizontal: 10.0),
+                          child: Image.asset(
+                            "assets/googleicon.png",
+                            height: 20.0,
+                          ),
                         ),
-                      ),
-                    )
-                  ],
-                ),
-              )),
-          SizedBox(height: 30),
-          TextButton(
-              onPressed: () async {
-                await GoogleSignIn().disconnect();
-                await _auth.signOut();
-              },
-              child: Text("로그아웃")),
-          TextButton(
-            onPressed: () async {
-              await GoogleSignIn().disconnect();
-              await _auth.currentUser!.delete();
-            },
-            child: Text("삭제"),
+                        Text("Google 아이디로 가입",
+                            style: TextStyle(color: Colors.black)),
+                        Opacity(
+                          opacity: 0.0,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15.0, horizontal: 10.0),
+                            child: Image.asset(
+                              "assets/googleicon.png",
+                              height: 20.0,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  )),
+              SizedBox(height: 30),
+              // TextButton(
+              //     onPressed: () async {
+              //       await GoogleSignIn().disconnect();
+              //       await _auth.signOut();
+              //     },
+              //     child: Text("로그아웃")),
+              // TextButton(
+              //   onPressed: () async {
+              //     await GoogleSignIn().disconnect();
+              //     await _auth.currentUser!.delete();
+              //   },
+              //   child: Text("삭제"),
+              // )
+            ],
           )
         ],
       ),
@@ -324,6 +470,25 @@ class _SignUpEmailState extends State<SignUpEmail> {
   TextEditingController password1 = TextEditingController();
   TextEditingController password2 = TextEditingController();
 
+  bool isChecked1 = false;
+  bool isChecked2 = false;
+  bool isChecked3 = false;
+  bool isAccept = true;
+
+  int nicknamenum = 1;
+
+  Widget nicknamegood = Text("2~10자리 한글, 영문, 숫자만 가능합니다.",
+      style: TextStyle(color: Colors.black54));
+
+  Widget nicknameunder2 = Text("2자리보다 적습니다.",
+      style: TextStyle(color: Colors.red));
+
+  Widget nicknamemore10 = Text("10자리를 초과합니다.",
+      style: TextStyle(color: Colors.red));
+
+  Widget nicknamenogood = Text("올바른 닉네임을 입력해주세요.",
+      style: TextStyle(color: Colors.red));
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -331,10 +496,111 @@ class _SignUpEmailState extends State<SignUpEmail> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
-            height: 15.0,
+          SizedBox(height: 30.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  SizedBox(
+                      height: 35.0,
+                      child: Checkbox(
+                          value: isChecked1,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isChecked1 = value!;
+                              isChecked2 = value;
+                              isChecked3 = value;
+                              if (value == true) {
+                                isAccept = true;
+                              }
+                            });
+                          })),
+                  Text("전체 동의")
+                ],
+              ),
+            ],
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  SizedBox(
+                      height: 35.0,
+                      child: Checkbox(
+                          value: isChecked2,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isChecked2 = value!;
+                              if (isChecked2 && isChecked3) {
+                                isAccept = true;
+                              } else if (!isChecked2 || !isChecked3) {
+                                isChecked1 = false;
+                              }
+                            });
+                          })),
+                  Text("Meta Gamer 이용약관")
+                ],
+              ),
+              SizedBox(
+                  height: 35.0,
+                  child: TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        "보기",
+                        style: TextStyle(decoration: TextDecoration.underline),
+                      )))
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  SizedBox(
+                      height: 35.0,
+                      child: Checkbox(
+                          value: isChecked3,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isChecked3 = value!;
+                              if (isChecked2 && isChecked3) {
+                                isAccept = true;
+                              } else if (!isChecked2 || !isChecked3) {
+                                isChecked1 = false;
+                              }
+                            });
+                          })),
+                  Text("개인정보수집 및 이용 동의")
+                ],
+              ),
+              SizedBox(
+                  height: 35.0,
+                  child: TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        "보기",
+                        style: TextStyle(decoration: TextDecoration.underline),
+                      )))
+            ],
+          ),
+          SizedBox(height: 15.0),
+          Text("약관 동의 후 가입이 가능합니다.", style: TextStyle(color: isAccept ? Colors.transparent : Colors.red)),
+          SizedBox(height: 15.0),
+          Container(
+            height: 1,
+            color: Colors.grey[300],
+          ),
+          SizedBox(height: 30.0),
           TextField(
+            onChanged: (text) {
+              if (text.length >= 2 && text.length <= 10) {
+                setState(() {
+                  nicknamenum = 1;
+                });
+              }
+            },
             decoration: InputDecoration(
                 prefixIcon: Icon(
                   Icons.account_circle,
@@ -352,7 +618,15 @@ class _SignUpEmailState extends State<SignUpEmail> {
             controller: nickname,
             autofocus: false,
           ),
-          UnderText(text: ""),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, top: 5.0),
+                child: nicknamenum == 1 ? nicknamegood : nickname == 2 ? nicknameunder2  : nicknamenum == 3 ? nicknamemore10 : nicknamenogood,
+              ),
+            ],
+          ),
+          SizedBox(height: 15.0),
           TextField(
             decoration: InputDecoration(
                 prefixIcon: Icon(
@@ -371,7 +645,16 @@ class _SignUpEmailState extends State<SignUpEmail> {
             controller: email,
             autofocus: false,
           ),
-          UnderText(text: ""),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, top: 5.0),
+                child: Text("올바른 이메일 주소를 입력해주세요.",
+                    style: TextStyle(color: Colors.black54)),
+              ),
+            ],
+          ),
+          SizedBox(height: 15.0),
           TextField(
             decoration: InputDecoration(
                 prefixIcon: Icon(
@@ -390,7 +673,7 @@ class _SignUpEmailState extends State<SignUpEmail> {
             controller: password1,
             autofocus: false,
           ),
-          UnderText(text: ""),
+          SizedBox(height: 30.0),
           TextField(
             decoration: InputDecoration(
                 prefixIcon: Icon(
@@ -409,7 +692,6 @@ class _SignUpEmailState extends State<SignUpEmail> {
             controller: password2,
             autofocus: false,
           ),
-          UnderText(text: ""),
           SizedBox(
             height: 20.0,
           ),
@@ -418,7 +700,7 @@ class _SignUpEmailState extends State<SignUpEmail> {
                 primary: Colors.indigo,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0))),
-            onPressed: () async {
+            onPressed: () {
               // String uid = _auth.currentUser!.uid;
               // print(uid);
               // await _auth.currentUser!.delete();
@@ -437,35 +719,29 @@ class _SignUpEmailState extends State<SignUpEmail> {
               // } catch (e) {
               //   print(e);
               // }
+
+              if (!isChecked2 || !isChecked3) {
+                setState(() {
+                  isAccept = false;
+                });
+              } else if (nickname.text.length < 2) {
+                setState(() {
+                  nicknamenum = 2;
+                });
+              } else if (nickname.text.length > 10) {
+                setState(() {
+                  nicknamenum = 3;
+                });
+              } else if (nickname.text.contains(nickname.text)) {//여기서 자모음, 공백, 특수문자 확인
+                setState(() {
+                  nicknamenum = 4;
+                });
+              } else {
+                print("정상");
+              }
             },
             child: Text("가입"),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class UnderText extends StatefulWidget {
-  final String text;
-
-  const UnderText({Key? key, required this.text}) : super(key: key);
-
-  @override
-  _UnderTextState createState() => _UnderTextState();
-}
-
-class _UnderTextState extends State<UnderText> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: 3.0, left: 10.0, bottom: 5.0),
-      child: Row(
-        children: [
-          Text(
-            widget.text,
-            style: TextStyle(fontSize: 15, color: Colors.red),
-          )
         ],
       ),
     );
