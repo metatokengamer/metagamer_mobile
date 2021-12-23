@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:metagamer/appbar.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:metagamer/boad_page.dart';
 import 'package:metagamer/current_route.dart';
 import 'package:metagamer/login/email_login.dart';
 import 'package:metagamer/login/signup.dart';
@@ -63,7 +64,8 @@ class MyApp extends StatelessWidget {
         "/home": (context) => HomePage(),
         "/login": (context) => LoginScreen(),
         "/login/email_login": (context) => EmailLogin(),
-        "/login/signup":(context) => SignUp()
+        "/login/signup":(context) => SignUp(),
+        "/boad":(context) => BoadPage()
       },
 
       home: HomePage(),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:metagamer/boad_page.dart';
 import 'package:metagamer/current_route.dart';
+import 'package:metagamer/main.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({Key? key}) : super(key: key);
@@ -38,13 +40,17 @@ class _BottomState extends State<Bottom> {
       children: [
         OutlinedButton(onPressed: () {
           if (currentRoute != CurrentRoute.home) {
-            Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+            Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => HomePage(), transitionDuration: Duration.zero));
           }
-        }, child: Text("home1")),
-        OutlinedButton(onPressed: () {}, child: Text("home2")),
-        OutlinedButton(onPressed: () {}, child: Text("home3")),
-        OutlinedButton(onPressed: () {}, child: Text("home4")),
-        OutlinedButton(onPressed: () {}, child: Text("home5")),
+        }, child: Text("홈")),
+        OutlinedButton(onPressed: () {
+          if (currentRoute != CurrentRoute.boad) {
+            Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => BoadPage(), transitionDuration: Duration.zero));
+          }
+        }, child: Text("게시판")),
+        OutlinedButton(onPressed: () {}, child: Text("공략")),
+        OutlinedButton(onPressed: () {}, child: Text("거래")),
+        OutlinedButton(onPressed: () {}, child: Text("마이")),
       ],
     );
   }

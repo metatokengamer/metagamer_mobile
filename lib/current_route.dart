@@ -1,4 +1,4 @@
-enum CurrentRoute {home, login, emailLogin, signup}
+enum CurrentRoute {home, login, emailLogin, signup, boad}
 CurrentRoute currentRoute = CurrentRoute.home;
 void setRoute(int i) {
   if (i == 1) {
@@ -9,6 +9,8 @@ void setRoute(int i) {
     currentRoute = CurrentRoute.emailLogin;
   } else if (i == 4) {
     currentRoute = CurrentRoute.signup;
+  } else if (i == 5) {
+    currentRoute = CurrentRoute.boad;
   }
 }
 
