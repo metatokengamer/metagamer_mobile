@@ -458,12 +458,14 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                   onPressed: () async {
                     // await GoogleSignIn().disconnect();
                     await _auth.signOut();
+                    // await GoogleSignIn().signOut();
                   },
                   child: Text("로그아웃")),
               TextButton(
                 onPressed: () async {
                   // await GoogleSignIn().disconnect();
                   await _auth.currentUser!.delete();
+                  await _auth.signOut();
                 },
                 child: Text("삭제"),
               )
@@ -475,6 +477,7 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
   }
 
   Future<bool> signInWithGoogle() async {
+    await GoogleSignIn().disconnect();
     String date = DateFormat('yyyy/MM/dd HH:mm:ss').format(DateTime.now());
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     final GoogleSignInAuthentication googleAuth =
@@ -504,7 +507,6 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
           accept2: date); //날짜 설정
       await reference.doc(_auth.currentUser!.email).set(model.toJson());
     }
-
     return isNew;
   }
 }
@@ -926,21 +928,14 @@ class _SignUpEmailState extends State<SignUpEmail> {
                   print(e);
                 }
               }
-
-              // String test = "아ㅓㄹ";
-              // if (!test.contains(new RegExp(r'[a-zA-Z]+')) || test.contains(new RegExp(r'[ㄱ-ㅎㅏ-ㅣ가-힣]+')) || test.length < 6 || test.length >12) {
-              //   print("포함");
-              // } else {
-              //   print("미보함");
-              // }
             },
             child: Text("가입"),
           ),
           TextButton(onPressed: () async {
             try {
               UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                  email: email.text,
-                  password: password1.text
+                  email: "kmj654649@gmail.com",
+                  password: "goqkfkrl"
               );
             } on FirebaseAuthException catch (e) {
               if (e.code == 'user-not-found') {
