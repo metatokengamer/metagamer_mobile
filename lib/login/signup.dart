@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
+import 'package:metagamer/loader.dart';
 import 'package:metagamer/model/first_login_model.dart';
 
 import '../appbar.dart';
@@ -477,6 +478,7 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
   }
 
   Future<bool> signInWithGoogle() async {
+    Loader.showLoadingDialog(context);
     await GoogleSignIn().disconnect();
     String date = DateFormat('yyyy/MM/dd HH:mm:ss').format(DateTime.now());
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -507,6 +509,7 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
           accept2: date); //날짜 설정
       await reference.doc(_auth.currentUser!.email).set(model.toJson());
     }
+    Loader.closeLoadingDialog();
     return isNew;
   }
 }
@@ -911,6 +914,7 @@ class _SignUpEmailState extends State<SignUpEmail> {
                   password2num = 1;
                   print("정상");
                 });
+                Loader.showLoadingDialog(context);
                 try {
                   final newUser = await _auth.createUserWithEmailAndPassword(
                     email: email.text,
@@ -927,6 +931,7 @@ class _SignUpEmailState extends State<SignUpEmail> {
                 } catch (e) {
                   print(e);
                 }
+                Loader.closeLoadingDialog();
               }
             },
             child: Text("가입"),

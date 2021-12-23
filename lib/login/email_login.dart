@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:metagamer/current_route.dart';
+import 'package:metagamer/loader.dart';
 
 import '../appbar.dart';
 import '../bottom_nav.dart';
@@ -48,6 +49,8 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
 
   String emailtext = "";
   String passwordtext = "";
+
+  bool isLoad = false;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +147,8 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
               children: [
                 Padding(
                     padding: EdgeInsets.only(left: 20.0, top: 5.0),
-                    child: Text(passwordtext, style: TextStyle(color: Colors.red)))
+                    child:
+                        Text(passwordtext, style: TextStyle(color: Colors.red)))
               ],
             ),
             SizedBox(height: 15.0),
@@ -155,6 +159,7 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
                       borderRadius: BorderRadius.circular(20.0))),
               child: Text("로그인"),
               onPressed: () async {
+                Loader.showLoadingDialog(context);
                 if (email.text.length == 0) {
                   setState(() {
                     emailtext = "이메일을 입력해주세요";
@@ -167,14 +172,13 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
                 } else {
                   try {
                     await FirebaseAuth.instance.signInWithEmailAndPassword(
-                        email: email.text,
-                        password: password.text
-                    );
+                        email: email.text, password: password.text);
                   } on FirebaseAuthException catch (e) {
-                    if (e.code == 'user-not-found') {//회원없음
+                    if (e.code == 'user-not-found') {
+                      //회원없음
                       print('No user found for that email.');
-
-                    } else if (e.code == 'wrong-password') {//비번틀림
+                    } else if (e.code == 'wrong-password') {
+                      //비번틀림
                       print('Wrong password provided for that user.');
                       setState(() {
                         passwordtext = "비밀번호가 틀립니다.";
@@ -182,10 +186,18 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
                     }
                   }
                 }
+                Loader.closeLoadingDialog();
               },
             ),
             SizedBox(height: 15.0),
-            TextButton(onPressed: () {}, child: Text("비밀번호를 잊으셨나요?"))
+            TextButton(onPressed: () {}, child: Text("비밀번호를 잊으셨나요?")),
+            TextButton(
+                onPressed: () {
+                  setState(() {
+                    Loader.showLoadingDialog(context);
+                  });
+                },
+                child: Text("test")),
           ],
         ),
       ),
