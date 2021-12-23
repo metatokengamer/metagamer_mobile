@@ -462,22 +462,22 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                     ),
                   )),
               SizedBox(height: 30),
-
-              TextButton(
-                  onPressed: () async {
-                    // await GoogleSignIn().disconnect();
-                    await _auth.signOut();
-                    // await GoogleSignIn().signOut();
-                  },
-                  child: Text("로그아웃")),
-              TextButton(
-                onPressed: () async {
-                  // await GoogleSignIn().disconnect();
-                  await _auth.currentUser!.delete();
-                  await _auth.signOut();
-                },
-                child: Text("삭제"),
-              )
+              //
+              // TextButton(
+              //     onPressed: () async {
+              //       // await GoogleSignIn().disconnect();
+              //       await _auth.signOut();
+              //       // await GoogleSignIn().signOut();
+              //     },
+              //     child: Text("로그아웃")),
+              // TextButton(
+              //   onPressed: () async {
+              //     // await GoogleSignIn().disconnect();
+              //     await _auth.currentUser!.delete();
+              //     await _auth.signOut();
+              //   },
+              //   child: Text("삭제"),
+              // )
             ],
           )
         ],
@@ -930,6 +930,20 @@ class _SignUpEmailState extends State<SignUpEmail> {
                   );
                   bool isNew = newUser.additionalUserInfo!.isNewUser;
                   print(isNew);
+                  if (isNew) {
+                    String date = DateFormat('yyyy/MM/dd HH:mm:ss').format(DateTime.now());
+                    CollectionReference reference =
+                    await FirebaseFirestore.instance.collection("user");
+                    String defaultIconUrl =
+                        "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/dev%2Fdefaultprofileicon.png?alt=media&token=cee38d5d-48b1-4e85-bbe0-d3114c07959a";
+                    FirstLoginModel model = FirstLoginModel(
+                        email: _auth.currentUser!.email.toString(),
+                        nickname: nickname.text,
+                        defaulticon: defaultIconUrl,
+                        accept1: date,
+                        accept2: date); //날짜 설정
+                    await reference.doc(_auth.currentUser!.email).set(model.toJson());
+                  }
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'weak-password') {
                     print('The password provided is too weak.');
@@ -944,20 +958,20 @@ class _SignUpEmailState extends State<SignUpEmail> {
             },
             child: Text("가입"),
           ),
-          TextButton(onPressed: () async {
-            try {
-              UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                  email: "kmj654649@gmail.com",
-                  password: "goqkfkrl"
-              );
-            } on FirebaseAuthException catch (e) {
-              if (e.code == 'user-not-found') {
-                print('No user found for that email.');
-              } else if (e.code == 'wrong-password') {
-                print('Wrong password provided for that user.');
-              }
-            }
-          }, child: Text("로그인"))
+          // TextButton(onPressed: () async {
+          //   try {
+          //     UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          //         email: "kmj654649@gmail.com",
+          //         password: "goqkfkrl"
+          //     );
+          //   } on FirebaseAuthException catch (e) {
+          //     if (e.code == 'user-not-found') {
+          //       print('No user found for that email.');
+          //     } else if (e.code == 'wrong-password') {
+          //       print('Wrong password provided for that user.');
+          //     }
+          //   }
+          // }, child: Text("로그인"))
         ],
       ),
     );
