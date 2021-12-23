@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:metagamer/current_route.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({Key? key}) : super(key: key);
@@ -35,7 +36,11 @@ class _BottomState extends State<Bottom> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        OutlinedButton(onPressed: () {}, child: Text("home1")),
+        OutlinedButton(onPressed: () {
+          if (currentRoute != CurrentRoute.home) {
+            Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+          }
+        }, child: Text("home1")),
         OutlinedButton(onPressed: () {}, child: Text("home2")),
         OutlinedButton(onPressed: () {}, child: Text("home3")),
         OutlinedButton(onPressed: () {}, child: Text("home4")),
