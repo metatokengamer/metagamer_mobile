@@ -7,12 +7,24 @@ import 'package:metagamer/loader.dart';
 import '../appbar.dart';
 import '../bottom_nav.dart';
 
-class EmailLogin extends StatelessWidget {
+class EmailLogin extends StatefulWidget {
   const EmailLogin({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  State<EmailLogin> createState() => _EmailLoginState();
+}
+
+class _EmailLoginState extends State<EmailLogin> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
     setRoute(3);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: WillPopScope(
         child: Scaffold(

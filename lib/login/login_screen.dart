@@ -21,6 +21,14 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    setRoute(2);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     setRoute(2);

@@ -71,22 +71,49 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  DateTime pre_backpress = DateTime.now();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    setRoute(1);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    setRoute(1);
     return SafeArea(
-      child: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomAppbar(),
-              MainPage(),
-              KeyboardVisibilityProvider(child: BottomNav())
-            ],
+      child: WillPopScope(
+        onWillPop: () async {
+          final timegap = DateTime.now().difference(pre_backpress);
+          final cantExit = timegap >= Duration(seconds: 2);
+          pre_backpress = DateTime.now();
+          if (cantExit) {
+            final snack = SnackBar(content: Text("한번더눌러서종료"), duration: Duration(seconds: 2));
+            ScaffoldMessenger.of(context).showSnackBar(snack);
+            return false;
+          } else {
+            return true;
+          }
+        },
+        child: Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CustomAppbar(),
+                MainPage(),
+                KeyboardVisibilityProvider(child: BottomNav())
+              ],
+            ),
           ),
         ),
       ),
