@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:metagamer/current_route.dart';
-import 'package:metagamer/loader.dart';
+import 'package:metagamer/dialog/loader.dart';
+import 'package:metagamer/dialog/send_verify_again.dart';
 
 import '../appbar.dart';
 import '../bottom_nav.dart';
@@ -63,11 +64,13 @@ class EditEmailLogin extends StatefulWidget {
 }
 
 class _EditEmailLoginState extends State<EditEmailLogin> {
+  final _auth = FirebaseAuth.instance;
   TextEditingController email = new TextEditingController();
   TextEditingController password = new TextEditingController();
 
   String emailtext = "";
   String passwordtext = "";
+  String logintext = "";
 
   bool isLoad = false;
 
@@ -162,7 +165,7 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
                     hintText: "비밀번호",
                     hintStyle: TextStyle(color: Colors.grey),
                     contentPadding: EdgeInsets.all(10.0)),
-                controller: email,
+                controller: password,
                 autofocus: false,
               ),
               Row(
@@ -174,6 +177,7 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
                 ],
               ),
               SizedBox(height: 15.0),
+              Text(logintext, style: TextStyle(color: Colors.red)),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     primary: Colors.indigo,
@@ -195,10 +199,20 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
                     try {
                       await FirebaseAuth.instance.signInWithEmailAndPassword(
                           email: email.text, password: password.text);
+                      if (!_auth.currentUser!.emailVerified) {
+                        Loader.closeLoadingDialog();
+                        SendVerifyAgain.showSendVerifyAgainDialog(context);
+                        _auth.signOut();
+                      }
+                      Loader.closeLoadingDialog();
+                      Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'user-not-found') {
                         //회원없음
                         print('No user found for that email.');
+                        setState(() {
+                          logintext = "등록된 이메일이 없습니다.";
+                        });
                       } else if (e.code == 'wrong-password') {
                         //비번틀림
                         print('Wrong password provided for that user.');
@@ -207,6 +221,7 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
                         });
                       }
                     }
+
                   }
                   Loader.closeLoadingDialog();
                 },

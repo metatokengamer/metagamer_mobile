@@ -40,12 +40,14 @@ class _BottomState extends State<Bottom> {
       children: [
         OutlinedButton(onPressed: () {
           if (currentRoute != CurrentRoute.home) {
-            Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => HomePage(), transitionDuration: Duration.zero));
+            Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+            // Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => HomePage(), transitionDuration: Duration.zero));
           }
         }, child: Text("홈")),
         OutlinedButton(onPressed: () {
           if (currentRoute != CurrentRoute.boad) {
-            Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => BoadPage(), transitionDuration: Duration.zero));
+            // Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => BoadPage(), transitionDuration: Duration.zero));
+            Navigator.pushNamedAndRemoveUntil(context, "/boad", (route) => false);
           }
         }, child: Text("게시판")),
         OutlinedButton(onPressed: () {}, child: Text("공략")),

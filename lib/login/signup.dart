@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
-import 'package:metagamer/loader.dart';
+import 'package:metagamer/dialog/email_verify.dart';
+import 'package:metagamer/dialog/loader.dart';
 import 'package:metagamer/model/first_login_model.dart';
 
 import '../appbar.dart';
@@ -19,7 +20,6 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-
   @override
   void initState() {
     // TODO: implement initState
@@ -83,7 +83,9 @@ class _EditSignUpState extends State<EditSignUp> {
     return Padding(
       padding:
           // isKeyboardVisible ? EdgeInsets.only(top: 70.0) : EdgeInsets.all(0.0),
-      isKeyboardVisible ? EdgeInsets.only(top: 70.0) : EdgeInsets.symmetric(vertical: 70.0),
+          isKeyboardVisible
+              ? EdgeInsets.only(top: 70.0)
+              : EdgeInsets.symmetric(vertical: 70.0),
       child: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -462,22 +464,22 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                     ),
                   )),
               SizedBox(height: 30),
-              //
-              // TextButton(
-              //     onPressed: () async {
-              //       // await GoogleSignIn().disconnect();
-              //       await _auth.signOut();
-              //       // await GoogleSignIn().signOut();
-              //     },
-              //     child: Text("로그아웃")),
-              // TextButton(
-              //   onPressed: () async {
-              //     // await GoogleSignIn().disconnect();
-              //     await _auth.currentUser!.delete();
-              //     await _auth.signOut();
-              //   },
-              //   child: Text("삭제"),
-              // )
+
+              TextButton(
+                  onPressed: () async {
+                    // await GoogleSignIn().disconnect();
+                    await _auth.signOut();
+                    // await GoogleSignIn().signOut();
+                  },
+                  child: Text("로그아웃")),
+              TextButton(
+                onPressed: () async {
+                  // await GoogleSignIn().disconnect();
+                  await _auth.currentUser!.delete();
+                  await _auth.signOut();
+                },
+                child: Text("삭제"),
+              )
             ],
           )
         ],
@@ -530,7 +532,6 @@ class SignUpEmail extends StatefulWidget {
 }
 
 class _SignUpEmailState extends State<SignUpEmail> {
-
   final _auth = FirebaseAuth.instance;
 
   TextEditingController nickname = TextEditingController();
@@ -922,18 +923,20 @@ class _SignUpEmailState extends State<SignUpEmail> {
                   password2num = 1;
                   print("정상");
                 });
+                String userEmail = email.text;
                 Loader.showLoadingDialog(context);
                 try {
                   final newUser = await _auth.createUserWithEmailAndPassword(
-                    email: email.text,
+                    email: userEmail,
                     password: password1.text,
                   );
                   bool isNew = newUser.additionalUserInfo!.isNewUser;
                   print(isNew);
                   if (isNew) {
-                    String date = DateFormat('yyyy/MM/dd HH:mm:ss').format(DateTime.now());
+                    String date = DateFormat('yyyy/MM/dd HH:mm:ss')
+                        .format(DateTime.now());
                     CollectionReference reference =
-                    await FirebaseFirestore.instance.collection("user");
+                        await FirebaseFirestore.instance.collection("user");
                     String defaultIconUrl =
                         "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/dev%2Fdefaultprofileicon.png?alt=media&token=cee38d5d-48b1-4e85-bbe0-d3114c07959a";
                     FirstLoginModel model = FirstLoginModel(
@@ -942,7 +945,9 @@ class _SignUpEmailState extends State<SignUpEmail> {
                         defaulticon: defaultIconUrl,
                         accept1: date,
                         accept2: date); //날짜 설정
-                    await reference.doc(_auth.currentUser!.email).set(model.toJson());
+                    await reference
+                        .doc(_auth.currentUser!.email)
+                        .set(model.toJson());
                   }
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'weak-password') {
@@ -953,25 +958,32 @@ class _SignUpEmailState extends State<SignUpEmail> {
                 } catch (e) {
                   print(e);
                 }
+                await _auth.currentUser!.sendEmailVerification();
                 Loader.closeLoadingDialog();
+                EmailVerify.showEmailVerifyDialog(context, userEmail);
               }
             },
             child: Text("가입"),
           ),
-          // TextButton(onPressed: () async {
-          //   try {
-          //     UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          //         email: "kmj654649@gmail.com",
-          //         password: "goqkfkrl"
-          //     );
-          //   } on FirebaseAuthException catch (e) {
-          //     if (e.code == 'user-not-found') {
-          //       print('No user found for that email.');
-          //     } else if (e.code == 'wrong-password') {
-          //       print('Wrong password provided for that user.');
-          //     }
-          //   }
-          // }, child: Text("로그인"))
+          TextButton(onPressed: () async {
+            // try {
+            //   UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+            //       email: "kmj654649@gmail.com",
+            //       password: "goqkfkrl"
+            //   );
+            // } on FirebaseAuthException catch (e) {
+            //   if (e.code == 'user-not-found') {
+            //     print('No user found for that email.');
+            //   } else if (e.code == 'wrong-password') {
+            //     print('Wrong password provided for that user.');
+            //   }
+            // }
+            print(_auth.currentUser!.emailVerified);
+
+            // EmailVerify.showEmailVerifyDialog(context, "kmh6542r@dlsak");
+            // await _auth.currentUser!.sendEmailVerification();
+            // await _auth.currentUser!.email
+          }, child: Text("로그인"))
         ],
       ),
     );
