@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:metagamer/current_route.dart';
 import 'package:metagamer/dialog/loader.dart';
+import 'package:metagamer/dialog/reset_email_password.dart';
 import 'package:metagamer/dialog/send_verify_again.dart';
 import 'package:metagamer/login/signup.dart';
 
@@ -252,11 +253,13 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
                 },
               ),
               SizedBox(height: 15.0),
-              TextButton(onPressed: () {}, child: Text("비밀번호를 잊으셨나요?")),
+              TextButton(onPressed: () {
+                ResetEmailPassword.showResetEmailPasswordDialog(context);
+              }, child: Text("비밀번호를 잊으셨나요?")),
               TextButton(
                   onPressed: () {
                     setState(() {
-                      Loader.showLoadingDialog(context);
+                      _auth.sendPasswordResetEmail(email: "kmj654649@gmail.com");
                     });
                   },
                   child: Text("test")),

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-class EmailVerify {
+class SuccessSendEmailResetPassword {
   static bool _isLoading = false;
   static late BuildContext _context;
 
-  static void closeEmailVerifyDialog() {
+  static void closeSuccessSendEmailResetPasswordDialog() {
     if (_isLoading) {
       Navigator.of(_context).pop();
       _isLoading = false;
     }
   }
 
-  static void showEmailVerifyDialog(BuildContext context, String email) async {
+  static void showSuccessSendEmailResetPasswordDialog(BuildContext context, String email) async {
     _context = context;
 
     if (!_isLoading) {
@@ -48,7 +48,7 @@ class EmailVerify {
                           Text("메일에 인증버튼 눌른 후 다시 로그인해주세용"),
                           ElevatedButton(
                               onPressed: () {
-                                closeEmailVerifyDialog();
+                                closeSuccessSendEmailResetPasswordDialog();
                               },
                               child: Text("확인"))
                         ],
