@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
+import 'package:metagamer/dialog/already_have_user.dart';
 import 'package:metagamer/dialog/email_verify.dart';
 import 'package:metagamer/dialog/loader.dart';
 import 'package:metagamer/model/first_login_model.dart';
@@ -954,6 +955,14 @@ class _SignUpEmailState extends State<SignUpEmail> {
                     print('The password provided is too weak.');
                   } else if (e.code == 'email-already-in-use') {
                     print('The account already exists for that email.');
+                    //이미 등록된 회원
+                    Loader.closeLoadingDialog();
+                    AlreadyHaveUser.showAlreadyHaveUserDialog(context);
+                    // if (AlreadyHaveUser.willLogin) {
+                    //   currentRoute = CurrentRoute.login;
+                    //   // Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => SignUp(), transitionDuration: Duration.zero));
+                    //   Navigator.pop(context);
+                    // }
                   }
                 } catch (e) {
                   print(e);

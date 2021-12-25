@@ -4,6 +4,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:metagamer/current_route.dart';
 import 'package:metagamer/dialog/loader.dart';
 import 'package:metagamer/dialog/send_verify_again.dart';
+import 'package:metagamer/login/signup.dart';
 
 import '../appbar.dart';
 import '../bottom_nav.dart';
@@ -16,7 +17,6 @@ class EmailLogin extends StatefulWidget {
 }
 
 class _EmailLoginState extends State<EmailLogin> {
-
   @override
   void initState() {
     // TODO: implement initState
@@ -37,7 +37,8 @@ class _EmailLoginState extends State<EmailLogin> {
                 right: 0,
                 left: 0,
               ),
-              Center(child: KeyboardVisibilityProvider(child: EditEmailLogin())),
+              Center(
+                  child: KeyboardVisibilityProvider(child: EditEmailLogin())),
               Positioned(
                 child: KeyboardVisibilityProvider(child: BottomNav()),
                 bottom: 0,
@@ -73,12 +74,16 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
   String logintext = "";
 
   bool isLoad = false;
+  bool isAsk = false;
 
   @override
   Widget build(BuildContext context) {
-    final bool isKeyboardVisible = KeyboardVisibilityProvider.isKeyboardVisible(context);
+    final bool isKeyboardVisible =
+        KeyboardVisibilityProvider.isKeyboardVisible(context);
     return Padding(
-      padding: isKeyboardVisible ? EdgeInsets.only(top: 70.0) : EdgeInsets.symmetric(vertical: 70.0),
+      padding: isKeyboardVisible
+          ? EdgeInsets.only(top: 70.0)
+          : EdgeInsets.symmetric(vertical: 70.0),
       child: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -98,8 +103,8 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
               Column(
                 children: [
                   Text("Email 로그인",
-                      style:
-                          TextStyle(fontSize: 17.0, fontWeight: FontWeight.bold)),
+                      style: TextStyle(
+                          fontSize: 17.0, fontWeight: FontWeight.bold)),
                   SizedBox(height: 3.0),
                   Container(
                     height: 3,
@@ -138,7 +143,8 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
                 children: [
                   Padding(
                       padding: EdgeInsets.only(left: 20.0, top: 5.0),
-                      child: Text(emailtext, style: TextStyle(color: Colors.red)))
+                      child:
+                          Text(emailtext, style: TextStyle(color: Colors.red)))
                 ],
               ),
               SizedBox(height: 15.0),
@@ -172,12 +178,30 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
                 children: [
                   Padding(
                       padding: EdgeInsets.only(left: 20.0, top: 5.0),
-                      child:
-                          Text(passwordtext, style: TextStyle(color: Colors.red)))
+                      child: Text(passwordtext,
+                          style: TextStyle(color: Colors.red)))
                 ],
               ),
               SizedBox(height: 15.0),
               Text(logintext, style: TextStyle(color: Colors.red)),
+              isAsk
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("지금 바로 가입하세요!"),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => SignUp(), transitionDuration: Duration.zero));
+                            },
+                            child: Text(
+                              "가입하기",
+                              style: TextStyle(
+                                  fontSize: 16.0,
+                                  decoration: TextDecoration.underline),
+                            ))
+                      ],
+                    )
+                  : Container(height: 0),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     primary: Colors.indigo,
@@ -185,6 +209,10 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
                         borderRadius: BorderRadius.circular(20.0))),
                 child: Text("로그인"),
                 onPressed: () async {
+                  setState(() {
+                    logintext = "";
+                    isAsk = false;
+                  });
                   Loader.showLoadingDialog(context);
                   if (email.text.length == 0) {
                     setState(() {
@@ -205,23 +233,20 @@ class _EditEmailLoginState extends State<EditEmailLogin> {
                         _auth.signOut();
                       }
                       Loader.closeLoadingDialog();
-                      Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, "/home", (route) => false);
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'user-not-found') {
-                        //회원없음
-                        print('No user found for that email.');
                         setState(() {
-                          logintext = "등록된 이메일이 없습니다.";
+                          logintext = "등록된 이메일이 아닙니다.";
+                          isAsk = true;
                         });
                       } else if (e.code == 'wrong-password') {
-                        //비번틀림
-                        print('Wrong password provided for that user.');
                         setState(() {
-                          passwordtext = "비밀번호가 틀립니다.";
+                          passwordtext = "비밀번호가 일치하지 않습니다.";
                         });
                       }
                     }
-
                   }
                   Loader.closeLoadingDialog();
                 },
