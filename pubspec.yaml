@@ -40,8 +40,10 @@ dependencies:
   flutter_keyboard_visibility: ^5.1.0
   google_sign_in: ^5.2.1
   intl: ^0.17.0
-  html_editor_enhanced: ^2.4.0+1
-  file_picker: ^4.3.0
+  html_editor_enhanced: ^2.4.0+1 #html editor
+  file_picker: ^4.3.0 #file picker
+  flutter_html: ^2.2.1 #show html
+  flutter_inappwebview: ^5.3.2 #webivew
 
 dev_dependencies:
   flutter_test:
