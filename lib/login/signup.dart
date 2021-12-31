@@ -947,7 +947,7 @@ class _SignUpEmailState extends State<SignUpEmail> {
                         accept1: date,
                         accept2: date); //날짜 설정
                     await reference
-                        .doc(_auth.currentUser!.email)
+                        .doc(_auth.currentUser!.uid)
                         .set(model.toJson());
                   }
                 } on FirebaseAuthException catch (e) {

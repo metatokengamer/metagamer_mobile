@@ -1,14 +1,18 @@
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
+import 'package:intl/intl.dart';
 import 'package:metagamer/current_route.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:metagamer/model/boad_model.dart';
 
 import 'appbar.dart';
 import 'bottom_nav.dart';
@@ -73,6 +77,9 @@ class Boad extends StatefulWidget {
 
 class _BoadState extends State<Boad> {
   HtmlEditorController controller = HtmlEditorController();
+  final _auth = FirebaseAuth.instance;
+
+  late List<File> files = List.empty();
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +89,12 @@ class _BoadState extends State<Boad> {
           color: Colors.grey[200],
           child: Column(
             children: [
+              ElevatedButton(
+                  onPressed: () async {
+                    _uploadBoad();
+                    // print(await controller.getText());
+                  },
+                  child: Text("저장")),
               HtmlEditor(
                 controller: controller,
                 htmlEditorOptions: HtmlEditorOptions(
@@ -110,28 +123,52 @@ class _BoadState extends State<Boad> {
               SizedBox(
                 height: 10,
               ),
-              Stack(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Positioned(
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          height: 80,
-                          width: 80,
-                          child: Image(image: FileImage(File("/data/user/0/com.metagamer.metagamer/cache/file_picker/Resized_20211011_212306.jpg")),),
-                        ),
-                      ],
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      child: files.length == 0
+                          ? Row()
+                          : files.length == 1
+                              ? ImageSet(files[0].path, () {})
+                              : files.length == 2
+                                  ? Row(
+                                      children: [
+                                        ImageSet(files[0].path, () {}),
+                                        ImageSet(files[1].path, () {}),
+                                      ],
+                                    )
+                                  : files.length == 3
+                                      ? Row(
+                                          children: [
+                                            ImageSet(files[0].path, () {}),
+                                            ImageSet(files[1].path, () {}),
+                                            ImageSet(files[2].path, () {}),
+                                          ],
+                                        )
+                                      : files.length == 4
+                                          ? Row(
+                                              children: [
+                                                ImageSet(files[0].path, () {}),
+                                                ImageSet(files[1].path, () {}),
+                                                ImageSet(files[2].path, () {}),
+                                                ImageSet(files[3].path, () {}),
+                                              ],
+                                            )
+                                          : Row(),
                     ),
                   ),
-                  Positioned(
-                    right: 0,
-                    child: TextButton(
-                      onPressed: () {_uploadImageToStorage();},
-                      child: Text("add pic"),
-                    ),
+                  TextButton(
+                    onPressed: () async {
+                      pickFile();
+                      // _uploadBoad();
+                    },
+                    child: Text("add pic"),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -139,37 +176,76 @@ class _BoadState extends State<Boad> {
     );
   }
 
-  void _uploadImageToStorage() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true, type: FileType.image);
+  void pickFile() async {
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(allowMultiple: true, type: FileType.image);
     if (result != null) {
-      List<File> files = result.paths.map((path) => File(path!)).toList();
-      FirebaseStorage storage = FirebaseStorage.instance;
+      files = result.paths.map((path) => File(path!)).toList();
       for (int i = 0; i < files.length; i++) {
         print(">>>: " + files[i].path);
-        try {
-          Reference reference = FirebaseStorage.instance.ref("/testupload/");
-          await reference.putFile(files[i]);
-          String downloadUrl = await reference.getDownloadURL();
-          print(">>>: " + downloadUrl);
-        } on FirebaseException catch (e) {
-          return null;
-        }
+        setState(() {});
+        // try {
+        //   Reference reference = FirebaseStorage.instance.ref("/testupload/");
+        //   await reference.putFile(files[i]);
+        //   String downloadUrl = await reference.getDownloadURL();
+        //   print(">>>: " + downloadUrl);
+        // } on FirebaseException catch (e) {
+        //   return null;
+        // }
       }
-    } else {
-
-    }
+    } else {}
   }
 
-  // Future<String> uploadFile(var file, String filePath, String uploadPath) async {
-  //   try {
-  //     Reference reference = FirebaseStorage.instance.ref("/testupload/");
-  //     await reference.putFile(file);
-  //     String downloadUrl = await reference.getDownloadURL();
-  //     return downloadUrl;
-  //   } on FirebaseException catch (e) {
-  //     return '-1';
-  //   }
-  // }
+  void _uploadBoad() async {
+    String date = DateFormat('yyyy/MM/dd HH:mm:ss').format(DateTime.now());
+    CollectionReference reference =
+        await FirebaseFirestore.instance.collection("free_boad");
+    String myNickName = await FirebaseFirestore.instance
+        .collection("user")
+        .doc(_auth.currentUser!.uid)
+        .get()
+        .then((value) => value.get('nickname'));
+    print(myNickName);
+    BoadModel model = BoadModel(
+        time: date,
+        uid: _auth.currentUser!.uid,
+        nickname: myNickName,
+        title: "제목",
+        content: await controller.getText(),
+        like: "0",
+        view: "0");
+    await reference.doc("test").set(model.toJson());
+  }
+
+  Widget ImageSet(String path, VoidCallback onPressed) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 80,
+          child: Image(
+            image: FileImage(File(path)),
+          ),
+        ),
+        IconButton(
+          onPressed: () {
+            onPressed;
+          },
+          icon: Icon(Icons.cancel),
+        )
+      ],
+    );
+  }
+
+// Future<String> uploadFile(var file, String filePath, String uploadPath) async {
+//   try {
+//     Reference reference = FirebaseStorage.instance.ref("/testupload/");
+//     await reference.putFile(file);
+//     String downloadUrl = await reference.getDownloadURL();
+//     return downloadUrl;
+//   } on FirebaseException catch (e) {
+//     return '-1';
+//   }
+// }
 }
 
 class Boad1 extends StatefulWidget {
