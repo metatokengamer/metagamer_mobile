@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -16,6 +17,7 @@ import 'package:metagamer/model/boad_model.dart';
 
 import 'appbar.dart';
 import 'bottom_nav.dart';
+import 'dialog/loader.dart';
 
 class BoadPage extends StatefulWidget {
   const BoadPage({Key? key}) : super(key: key);
@@ -57,7 +59,7 @@ class _BoadPageState extends State<BoadPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CustomAppbar(),
-                Boad(),
+                BoadTest(),
                 KeyboardVisibilityProvider(child: BottomNav())
               ],
             ),
@@ -77,9 +79,14 @@ class Boad extends StatefulWidget {
 
 class _BoadState extends State<Boad> {
   HtmlEditorController controller = HtmlEditorController();
+  TextEditingController titleController = TextEditingController();
   final _auth = FirebaseAuth.instance;
 
   late List<File> files = List.empty();
+  String picPath0 = "";
+  String picPath1 = "";
+  String picPath2 = "";
+  String picPath3 = "";
 
   @override
   Widget build(BuildContext context) {
@@ -91,10 +98,20 @@ class _BoadState extends State<Boad> {
             children: [
               ElevatedButton(
                   onPressed: () async {
-                    _uploadBoad();
+                    // _uploadBoad();
                     // print(await controller.getText());
+                    _uploadPic();
+                    // await FirebaseStorage.instance.ref().child("testtest/").delete();
+                    // await FirebaseStorage.instance.refFromURL("https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/boad%2Ffree_boad%2FMffvHR0Lv7c0ikZTgoH7CbhvSK53_2022%2F01%2F01%2015%3A44%3A12%2F0?alt=media&token=826d491e-6b39-4a95-8a87-d689b9823403").delete();
+
+                    if (titleController.text.length == 0) {
+                    } else if (controller.getText().toString().length == 0) {
+                    } else {}
                   },
                   child: Text("저장")),
+              TextField(
+                controller: titleController,
+              ),
               HtmlEditor(
                 controller: controller,
                 htmlEditorOptions: HtmlEditorOptions(
@@ -181,40 +198,79 @@ class _BoadState extends State<Boad> {
         .pickFiles(allowMultiple: true, type: FileType.image);
     if (result != null) {
       files = result.paths.map((path) => File(path!)).toList();
-      for (int i = 0; i < files.length; i++) {
-        print(">>>: " + files[i].path);
-        setState(() {});
-        // try {
-        //   Reference reference = FirebaseStorage.instance.ref("/testupload/");
-        //   await reference.putFile(files[i]);
-        //   String downloadUrl = await reference.getDownloadURL();
-        //   print(">>>: " + downloadUrl);
-        // } on FirebaseException catch (e) {
-        //   return null;
-        // }
+      if (files.length > 4) {
+        //파일선택 4개이상 됨
+      } else {
+        for (int i = 0; i < files.length; i++) {
+          print(">>>: " + files[i].path);
+          setState(() {});
+          // try {
+          //   Reference reference = FirebaseStorage.instance.ref("/testupload/");
+          //   await reference.putFile(files[i]);
+          //   String downloadUrl = await reference.getDownloadURL();
+          //   print(">>>: " + downloadUrl);
+          // } on FirebaseException catch (e) {
+          //   return null;
+          // }
+        }
       }
-    } else {}
+    }
   }
 
-  void _uploadBoad() async {
-    String date = DateFormat('yyyy/MM/dd HH:mm:ss').format(DateTime.now());
+  void _uploadPic() async {
+    String myUid = await _auth.currentUser!.uid;
+    String date = DateFormat('yyyyMMdd HH:mm:ss').format(DateTime.now());
+    // Loader.showLoadingDialog(context);
+    if (files.length != 0) {
+      for (int i = 0; i < files.length; i++) {
+        try {
+          Reference reference = FirebaseStorage.instance.ref(
+              "/boad/free_boad/" + myUid + "_" + date + "/" + i.toString());
+          await reference.putFile(files[i]);
+          String downloadUrl = await reference.getDownloadURL();
+          if (i == 0) {
+            picPath0 = '<div><img src = "' + downloadUrl + '"/></div>';
+          } else if (i == 1) {
+            picPath1 = '<div><img src = "' + downloadUrl + '"/></div>';
+          } else if (i == 2) {
+            picPath2 = '<div><img src = "' + downloadUrl + '"/></div>';
+          } else if (i == 3) {
+            picPath3 = '<div><img src = "' + downloadUrl + '"/></div>';
+          }
+          print(">>>: " + downloadUrl);
+          _uploadBoad(myUid, date, myUid + "_" + date);
+        } on FirebaseException catch (e) {
+          print("인터넷 연결 안좋음: " + toString());
+          //dialog 띄우기
+        }
+      }
+    }
+  }
+
+  void _uploadBoad(String myUid, String date, docName) async {
     CollectionReference reference =
         await FirebaseFirestore.instance.collection("free_boad");
     String myNickName = await FirebaseFirestore.instance
         .collection("user")
-        .doc(_auth.currentUser!.uid)
+        .doc(myUid)
         .get()
         .then((value) => value.get('nickname'));
-    print(myNickName);
     BoadModel model = BoadModel(
         time: date,
-        uid: _auth.currentUser!.uid,
+        uid: myUid,
         nickname: myNickName,
-        title: "제목",
-        content: await controller.getText(),
+        title: titleController.text,
+        content: await controller.getText() +
+            picPath0 +
+            picPath1 +
+            picPath2 +
+            picPath3,
         like: "0",
         view: "0");
-    await reference.doc("test").set(model.toJson());
+    await reference
+        .doc(docName)
+        .set(model.toJson())
+        .catchError((e) => print("laskdjf")); //upload firestore
   }
 
   Widget ImageSet(String path, VoidCallback onPressed) {
@@ -376,18 +432,19 @@ class _BoadTestState extends State<BoadTest> {
         height: 500,
         child: Column(
           children: [
+            // SizedBox(
+            //   height: 200,
+            //   child: InAppWebView(
+            //     initialUrlRequest: URLRequest(
+            //         url: Uri.parse(
+            //             "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/testfolder%2Ftesthtml.html?alt=media&token=ac95f610-6e29-4918-bd2f-ea5ff52849b5")),
+            //   ),
+            // ),
             SizedBox(
-              height: 200,
-              child: InAppWebView(
-                initialUrlRequest: URLRequest(
-                    url: Uri.parse(
-                        "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/testfolder%2Ftesthtml.html?alt=media&token=ac95f610-6e29-4918-bd2f-ea5ff52849b5")),
-              ),
-            ),
-            SizedBox(
-              height: 200,
+              height: 500,
               child: Html(
-                data: testString + testString2,
+                data:
+                    '<p>ㅏ탙햫</p><p>ㅐ해햏</p><div><img src = "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/boad%2Ffree_boad%2FMffvHR0Lv7c0ikZTgoH7CbhvSK53_20220101%2015%3A58%3A05%2F0?alt=media&token=b49105ed-2932-4825-a91c-5097fbc5feb4"/></div><div><img src = "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/boad%2Ffree_boad%2FMffvHR0Lv7c0ikZTgoH7CbhvSK53_20220101%2015%3A58%3A03%2F1?alt=media&token=2a8720b6-5c67-4ec1-bddc-6cc9205b8470"/></div>',
               ),
             )
           ],
