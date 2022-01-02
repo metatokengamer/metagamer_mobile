@@ -35,25 +35,28 @@ class Bottom extends StatefulWidget {
 class _BottomState extends State<Bottom> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        OutlinedButton(onPressed: () {
-          if (currentRoute != CurrentRoute.home) {
-            Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
-            // Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => HomePage(), transitionDuration: Duration.zero));
-          }
-        }, child: Text("홈")),
-        OutlinedButton(onPressed: () {
-          if (currentRoute != CurrentRoute.boad) {
-            // Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => BoadPage(), transitionDuration: Duration.zero));
-            Navigator.pushNamedAndRemoveUntil(context, "/boad", (route) => false);
-          }
-        }, child: Text("게시판")),
-        OutlinedButton(onPressed: () {}, child: Text("공략")),
-        OutlinedButton(onPressed: () {}, child: Text("거래")),
-        OutlinedButton(onPressed: () {}, child: Text("마이")),
-      ],
+    return SizedBox(
+      height: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          OutlinedButton(onPressed: () {
+            if (currentRoute != CurrentRoute.home) {
+              Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+              // Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => HomePage(), transitionDuration: Duration.zero));
+            }
+          }, child: Text("홈")),
+          OutlinedButton(onPressed: () {
+            if (currentRoute != CurrentRoute.boad) {
+              // Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => BoadPage(), transitionDuration: Duration.zero));
+              Navigator.pushNamedAndRemoveUntil(context, "/boad", (route) => false);
+            }
+          }, child: Text("게시판")),
+          OutlinedButton(onPressed: () {}, child: Text("공략")),
+          OutlinedButton(onPressed: () {}, child: Text("거래")),
+          OutlinedButton(onPressed: () {}, child: Text("마이")),
+        ],
+      ),
     );
   }
 }

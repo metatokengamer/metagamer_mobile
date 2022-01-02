@@ -54,16 +54,44 @@ class _BoadPageState extends State<BoadPage> {
           }
         },
         child: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomAppbar(),
-                BoadTest(),
-                KeyboardVisibilityProvider(child: BottomNav())
-              ],
-            ),
+          body: Stack(
+            children: [
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 50,
+                child: Column(
+                  children: [
+                    CustomAppbar(),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: Boad(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: KeyboardVisibilityProvider(
+                  child: BottomNav(),
+                ),
+              )
+            ],
           ),
+
+          // Column(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     CustomAppbar(),
+          //     BoadTest(),
+          //     KeyboardVisibilityProvider(child: BottomNav())
+          //   ],
+          // ),
         ),
       ),
     );
@@ -78,6 +106,181 @@ class Boad extends StatefulWidget {
 }
 
 class _BoadState extends State<Boad> {
+  int categoryPage = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    categoryPage = 0;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Center(
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+                primary: Colors.transparent, elevation: 0.0),
+            icon: Icon(
+              Icons.arrow_drop_down,
+              color: Colors.black54,
+            ),
+            label: Text(
+              "게시판 선택",
+              style: TextStyle(color: Colors.black54),
+            ),
+            onPressed: () {
+              choiceCategory();
+            },
+          ),
+        ),
+        categoryPage == 0 ? BoadMain() : BoadCategory(categoryPage: categoryPage)
+      ],
+    );
+  }
+
+  void choiceCategory() {
+    final size = MediaQuery
+        .of(context)
+        .size
+        .width;
+    List<String> categoryList = ["메인", "자유게시판", "사드게시판", "붐크게시판", "히엠게시판", "히캣게시판"];
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+          title: Center(
+            child: Text("게시판선택"),
+          ),
+          content: Container(
+            width: size * 0.9,
+            child: ListView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.all(5.0),
+              itemCount: categoryList.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  color: Colors.white,
+                  child: index != 0 ? OutlinedButton(
+                    onPressed: () {
+                      setState(() {
+                        categoryPage = index;
+                      });
+                    },
+                    child: Text(
+                      categoryList[index],
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ) : Container(),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class BoadMain extends StatefulWidget {
+  const BoadMain({Key? key}) : super(key: key);
+
+  @override
+  _BoadMainState createState() => _BoadMainState();
+}
+
+class _BoadMainState extends State<BoadMain> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+      child: Container(
+        height: 200,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                  spreadRadius: 1,
+                  blurRadius: 1,
+                  offset: Offset(1, 1),
+                  color: Colors.grey)
+            ]),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Text("최신글"),
+                ],
+              ),
+              Container(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Opacity(opacity: 0.0),
+                  TextButton(onPressed: () {
+                    null;
+                  }, child: Text("더보기"),),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BoadCategory extends StatefulWidget {
+  final int categoryPage;
+
+  const BoadCategory({Key? key, required this.categoryPage}) : super(key: key);
+
+  @override
+  _BoadCategoryState createState() => _BoadCategoryState();
+}
+
+class _BoadCategoryState extends State<BoadCategory> {
+  @override
+  Widget build(BuildContext context) {
+    return Center();
+  }
+
+  String getCategoryName(int pageNum) {
+    if (pageNum == 0) {
+      return 'main';
+    } else if (pageNum == 1) {
+      return '자유게시판';
+    } else if (pageNum == 2) {
+      return '사드게시판';
+    } else if (pageNum == 3) {
+      return '붐크게시판';
+    } else if (pageNum == 4) {
+      return '히엠게시판';
+    } else if (pageNum == 5) {
+      return '히캣게시판';
+    } else {
+      return '';
+    }
+  }
+}
+
+
+class Boad2 extends StatefulWidget {
+  const Boad2({Key? key}) : super(key: key);
+
+  @override
+  _Boad2State createState() => _Boad2State();
+}
+
+class _Boad2State extends State<Boad2> {
   HtmlEditorController controller = HtmlEditorController();
   TextEditingController titleController = TextEditingController();
   final _auth = FirebaseAuth.instance;
@@ -104,9 +307,10 @@ class _BoadState extends State<Boad> {
                     // await FirebaseStorage.instance.ref().child("testtest/").delete();
                     // await FirebaseStorage.instance.refFromURL("https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/boad%2Ffree_boad%2FMffvHR0Lv7c0ikZTgoH7CbhvSK53_2022%2F01%2F01%2015%3A44%3A12%2F0?alt=media&token=826d491e-6b39-4a95-8a87-d689b9823403").delete();
 
-                    if (titleController.text.length == 0) {
-                    } else if (controller.getText().toString().length == 0) {
-                    } else {}
+                    if (titleController.text.length == 0) {} else if (controller
+                        .getText()
+                        .toString()
+                        .length == 0) {} else {}
                   },
                   child: Text("저장")),
               TextField(
@@ -149,32 +353,32 @@ class _BoadState extends State<Boad> {
                       child: files.length == 0
                           ? Row()
                           : files.length == 1
-                              ? ImageSet(files[0].path, () {})
-                              : files.length == 2
-                                  ? Row(
-                                      children: [
-                                        ImageSet(files[0].path, () {}),
-                                        ImageSet(files[1].path, () {}),
-                                      ],
-                                    )
-                                  : files.length == 3
-                                      ? Row(
-                                          children: [
-                                            ImageSet(files[0].path, () {}),
-                                            ImageSet(files[1].path, () {}),
-                                            ImageSet(files[2].path, () {}),
-                                          ],
-                                        )
-                                      : files.length == 4
-                                          ? Row(
-                                              children: [
-                                                ImageSet(files[0].path, () {}),
-                                                ImageSet(files[1].path, () {}),
-                                                ImageSet(files[2].path, () {}),
-                                                ImageSet(files[3].path, () {}),
-                                              ],
-                                            )
-                                          : Row(),
+                          ? ImageSet(files[0].path, () {})
+                          : files.length == 2
+                          ? Row(
+                        children: [
+                          ImageSet(files[0].path, () {}),
+                          ImageSet(files[1].path, () {}),
+                        ],
+                      )
+                          : files.length == 3
+                          ? Row(
+                        children: [
+                          ImageSet(files[0].path, () {}),
+                          ImageSet(files[1].path, () {}),
+                          ImageSet(files[2].path, () {}),
+                        ],
+                      )
+                          : files.length == 4
+                          ? Row(
+                        children: [
+                          ImageSet(files[0].path, () {}),
+                          ImageSet(files[1].path, () {}),
+                          ImageSet(files[2].path, () {}),
+                          ImageSet(files[3].path, () {}),
+                        ],
+                      )
+                          : Row(),
                     ),
                   ),
                   TextButton(
@@ -245,12 +449,14 @@ class _BoadState extends State<Boad> {
           //이미 업로드 한 파일 있으면 지우기
         }
       }
+    } else {
+      _uploadBoad(myUid, date, myUid + "_" + date);
     }
   }
 
   void _uploadBoad(String myUid, String date, docName) async {
     CollectionReference reference =
-        await FirebaseFirestore.instance.collection("free_boad");
+    await FirebaseFirestore.instance.collection("free_boad");
     String myNickName = await FirebaseFirestore.instance
         .collection("user")
         .doc(myUid)
@@ -430,27 +636,33 @@ class BoadTest extends StatefulWidget {
 class _BoadTestState extends State<BoadTest> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        height: 500,
-        child: Column(
-          children: [
-            // SizedBox(
-            //   height: 200,
-            //   child: InAppWebView(
-            //     initialUrlRequest: URLRequest(
-            //         url: Uri.parse(
-            //             "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/testfolder%2Ftesthtml.html?alt=media&token=ac95f610-6e29-4918-bd2f-ea5ff52849b5")),
-            //   ),
-            // ),
-            SizedBox(
-              height: 500,
-              child: Html(
-                data:
-                    '<p>ㅏ탙햫</p><p>ㅐ해햏</p><div><img src = "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/boad%2Ffree_boad%2FMffvHR0Lv7c0ikZTgoH7CbhvSK53_20220101%2015%3A58%3A05%2F0?alt=media&token=b49105ed-2932-4825-a91c-5097fbc5feb4"/></div><div><img src = "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/boad%2Ffree_boad%2FMffvHR0Lv7c0ikZTgoH7CbhvSK53_20220101%2015%3A58%3A03%2F1?alt=media&token=2a8720b6-5c67-4ec1-bddc-6cc9205b8470"/></div>',
-              ),
-            )
-          ],
-        ));
+    return Column(
+      children: [
+        // SizedBox(
+        //   height: 200,
+        //   child: InAppWebView(
+        //     initialUrlRequest: URLRequest(
+        //         url: Uri.parse(
+        //             "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/testfolder%2Ftesthtml.html?alt=media&token=ac95f610-6e29-4918-bd2f-ea5ff52849b5")),
+        //   ),
+        // ),
+        SizedBox(
+          height: 500,
+          child: Html(
+            data:
+            '<p>ㅏ탙햫</p><p>ㅐ해햏</p><div><img src = "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/boad%2Ffree_boad%2FMffvHR0Lv7c0ikZTgoH7CbhvSK53_20220101%2015%3A58%3A05%2F0?alt=media&token=b49105ed-2932-4825-a91c-5097fbc5feb4"/></div><div><img src = "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/boad%2Ffree_boad%2FMffvHR0Lv7c0ikZTgoH7CbhvSK53_20220101%2015%3A58%3A03%2F1?alt=media&token=2a8720b6-5c67-4ec1-bddc-6cc9205b8470"/></div>',
+          ),
+        ),
+        Container(
+          height: 500,
+          color: Colors.grey,
+        ),
+        Container(
+          height: 500,
+          color: Colors.lightGreen,
+        )
+      ],
+    );
   }
 
   String testString = "<p>11문단입니다</p><p>22문단입니다</p>";
