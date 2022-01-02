@@ -173,8 +173,9 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
             itemBuilder: (BuildContext context, int index) {
               return OutlinedButton(onPressed: () async {
                 setState(() {
+                  _controller.reverse();
+                  isOpen = false;
                   categoryPage = index;
-                  print(">>>: " + index.toString());
                 });
               }, child: Text(categoryList[index]));
             },
@@ -260,12 +261,6 @@ class BoadCategory extends StatefulWidget {
 }
 
 class _BoadCategoryState extends State<BoadCategory> {
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
