@@ -6,8 +6,8 @@ class Loader {
 
   static void closeLoadingDialog() {
     if (_isLoading) {
-      Navigator.of(_context).pop();
       _isLoading = false;
+      Navigator.of(_context).pop();
     }
   }
 

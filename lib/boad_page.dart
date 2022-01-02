@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/shims/dart_ui_fake.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
@@ -118,7 +119,8 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
     "사드게시판",
     "붐크게시판",
     "히엠게시판",
-    "히캣게시판"
+    "히캣게시판",
+    "또게시판"
   ];
 
   @override
@@ -126,7 +128,7 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
     super.initState();
     categoryPage = 0;
     _controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 100));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _animation.addListener(() {
       setState(() {});
@@ -156,10 +158,10 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
             ],
           ),
         ),
-        Container(
-          height: _animation.value * 200,
-          width: double.infinity,
+        SizeTransition(
+          sizeFactor: _animation,
           child: GridView.builder(
+            shrinkWrap: true,
             itemCount: categoryList.length,
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
               // crossAxisCount: 2,
@@ -169,7 +171,12 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
               crossAxisSpacing: 10,
             ),
             itemBuilder: (BuildContext context, int index) {
-              return SizedBox(child: OutlinedButton(onPressed: () {}, child: Text(categoryList[index])));
+              return OutlinedButton(onPressed: () async {
+                setState(() {
+                  categoryPage = index;
+                  print(">>>: " + index.toString());
+                });
+              }, child: Text(categoryList[index]));
             },
           ),
         ),
@@ -177,56 +184,6 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
             ? BoadMain()
             : BoadCategory(categoryPage: categoryPage)
       ],
-    );
-  }
-
-  void choiceCategoryDialog() {
-    final size = MediaQuery.of(context).size.width;
-    List<String> categoryList = [
-      "메인",
-      "자유게시판",
-      "사드게시판",
-      "붐크게시판",
-      "히엠게시판",
-      "히캣게시판"
-    ];
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-          title: Center(
-            child: Text("게시판선택"),
-          ),
-          content: Container(
-            width: size * 0.9,
-            child: ListView.builder(
-              shrinkWrap: true,
-              padding: EdgeInsets.all(5.0),
-              itemCount: categoryList.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  color: Colors.white,
-                  child: index != 0
-                      ? OutlinedButton(
-                          onPressed: () {
-                            setState(() {
-                              categoryPage = index;
-                            });
-                          },
-                          child: Text(
-                            categoryList[index],
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        )
-                      : Container(),
-                );
-              },
-            ),
-          ),
-        );
-      },
     );
   }
 
@@ -303,9 +260,18 @@ class BoadCategory extends StatefulWidget {
 }
 
 class _BoadCategoryState extends State<BoadCategory> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center();
+    return Center(
+      child: Text(getCategoryName(widget.categoryPage)),
+    );
   }
 
   String getCategoryName(int pageNum) {
@@ -321,6 +287,8 @@ class _BoadCategoryState extends State<BoadCategory> {
       return '히엠게시판';
     } else if (pageNum == 5) {
       return '히캣게시판';
+    } else if (pageNum == 6){
+      return '또게시판';
     } else {
       return '';
     }
