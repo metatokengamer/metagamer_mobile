@@ -105,54 +105,97 @@ class Boad extends StatefulWidget {
   _BoadState createState() => _BoadState();
 }
 
-class _BoadState extends State<Boad> {
+class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
+  late Animation<double> _animation;
+  late AnimationController _controller;
+
+  String nowCategory = '';
+  bool isOpen = false;
   int categoryPage = 0;
+  List<String> categoryList = [
+    "메인",
+    "자유게시판",
+    "사드게시판",
+    "붐크게시판",
+    "히엠게시판",
+    "히캣게시판"
+  ];
 
   @override
   void initState() {
-    // TODO: implement initState
-    categoryPage = 0;
     super.initState();
+    categoryPage = 0;
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 100));
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    _animation.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Center(
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-                primary: Colors.transparent, elevation: 0.0),
-            icon: Icon(
-              Icons.arrow_drop_down,
-              color: Colors.black54,
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              if (isOpen) {
+                isOpen = false;
+                _controller.reverse();
+              } else {
+                isOpen = true;
+                _controller.forward();
+              }
+            });
+          },
+          child: Row(
+            children: [
+              Text("현제 카테고리"),
+              Icon(isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down)
+            ],
+          ),
+        ),
+        Container(
+          height: _animation.value * 200,
+          width: double.infinity,
+          child: GridView.builder(
+            itemCount: categoryList.length,
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              // crossAxisCount: 2,
+              maxCrossAxisExtent: 150,
+              childAspectRatio: 4 / 1,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
             ),
-            label: Text(
-              "게시판 선택",
-              style: TextStyle(color: Colors.black54),
-            ),
-            onPressed: () {
-              choiceCategory();
+            itemBuilder: (BuildContext context, int index) {
+              return SizedBox(child: OutlinedButton(onPressed: () {}, child: Text(categoryList[index])));
             },
           ),
         ),
-        categoryPage == 0 ? BoadMain() : BoadCategory(categoryPage: categoryPage)
+        categoryPage == 0
+            ? BoadMain()
+            : BoadCategory(categoryPage: categoryPage)
       ],
     );
   }
 
-  void choiceCategory() {
-    final size = MediaQuery
-        .of(context)
-        .size
-        .width;
-    List<String> categoryList = ["메인", "자유게시판", "사드게시판", "붐크게시판", "히엠게시판", "히캣게시판"];
+  void choiceCategoryDialog() {
+    final size = MediaQuery.of(context).size.width;
+    List<String> categoryList = [
+      "메인",
+      "자유게시판",
+      "사드게시판",
+      "붐크게시판",
+      "히엠게시판",
+      "히캣게시판"
+    ];
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           title: Center(
             child: Text("게시판선택"),
           ),
@@ -165,17 +208,19 @@ class _BoadState extends State<Boad> {
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   color: Colors.white,
-                  child: index != 0 ? OutlinedButton(
-                    onPressed: () {
-                      setState(() {
-                        categoryPage = index;
-                      });
-                    },
-                    child: Text(
-                      categoryList[index],
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ) : Container(),
+                  child: index != 0
+                      ? OutlinedButton(
+                          onPressed: () {
+                            setState(() {
+                              categoryPage = index;
+                            });
+                          },
+                          child: Text(
+                            categoryList[index],
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        )
+                      : Container(),
                 );
               },
             ),
@@ -183,6 +228,13 @@ class _BoadState extends State<Boad> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _controller.dispose();
+    super.dispose();
   }
 }
 
@@ -225,9 +277,12 @@ class _BoadMainState extends State<BoadMain> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Opacity(opacity: 0.0),
-                  TextButton(onPressed: () {
-                    null;
-                  }, child: Text("더보기"),),
+                  TextButton(
+                    onPressed: () {
+                      null;
+                    },
+                    child: Text("더보기"),
+                  ),
                 ],
               )
             ],
@@ -272,7 +327,6 @@ class _BoadCategoryState extends State<BoadCategory> {
   }
 }
 
-
 class Boad2 extends StatefulWidget {
   const Boad2({Key? key}) : super(key: key);
 
@@ -307,10 +361,9 @@ class _Boad2State extends State<Boad2> {
                     // await FirebaseStorage.instance.ref().child("testtest/").delete();
                     // await FirebaseStorage.instance.refFromURL("https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/boad%2Ffree_boad%2FMffvHR0Lv7c0ikZTgoH7CbhvSK53_2022%2F01%2F01%2015%3A44%3A12%2F0?alt=media&token=826d491e-6b39-4a95-8a87-d689b9823403").delete();
 
-                    if (titleController.text.length == 0) {} else if (controller
-                        .getText()
-                        .toString()
-                        .length == 0) {} else {}
+                    if (titleController.text.length == 0) {
+                    } else if (controller.getText().toString().length == 0) {
+                    } else {}
                   },
                   child: Text("저장")),
               TextField(
@@ -353,32 +406,32 @@ class _Boad2State extends State<Boad2> {
                       child: files.length == 0
                           ? Row()
                           : files.length == 1
-                          ? ImageSet(files[0].path, () {})
-                          : files.length == 2
-                          ? Row(
-                        children: [
-                          ImageSet(files[0].path, () {}),
-                          ImageSet(files[1].path, () {}),
-                        ],
-                      )
-                          : files.length == 3
-                          ? Row(
-                        children: [
-                          ImageSet(files[0].path, () {}),
-                          ImageSet(files[1].path, () {}),
-                          ImageSet(files[2].path, () {}),
-                        ],
-                      )
-                          : files.length == 4
-                          ? Row(
-                        children: [
-                          ImageSet(files[0].path, () {}),
-                          ImageSet(files[1].path, () {}),
-                          ImageSet(files[2].path, () {}),
-                          ImageSet(files[3].path, () {}),
-                        ],
-                      )
-                          : Row(),
+                              ? ImageSet(files[0].path, () {})
+                              : files.length == 2
+                                  ? Row(
+                                      children: [
+                                        ImageSet(files[0].path, () {}),
+                                        ImageSet(files[1].path, () {}),
+                                      ],
+                                    )
+                                  : files.length == 3
+                                      ? Row(
+                                          children: [
+                                            ImageSet(files[0].path, () {}),
+                                            ImageSet(files[1].path, () {}),
+                                            ImageSet(files[2].path, () {}),
+                                          ],
+                                        )
+                                      : files.length == 4
+                                          ? Row(
+                                              children: [
+                                                ImageSet(files[0].path, () {}),
+                                                ImageSet(files[1].path, () {}),
+                                                ImageSet(files[2].path, () {}),
+                                                ImageSet(files[3].path, () {}),
+                                              ],
+                                            )
+                                          : Row(),
                     ),
                   ),
                   TextButton(
@@ -456,7 +509,7 @@ class _Boad2State extends State<Boad2> {
 
   void _uploadBoad(String myUid, String date, docName) async {
     CollectionReference reference =
-    await FirebaseFirestore.instance.collection("free_boad");
+        await FirebaseFirestore.instance.collection("free_boad");
     String myNickName = await FirebaseFirestore.instance
         .collection("user")
         .doc(myUid)
@@ -650,7 +703,7 @@ class _BoadTestState extends State<BoadTest> {
           height: 500,
           child: Html(
             data:
-            '<p>ㅏ탙햫</p><p>ㅐ해햏</p><div><img src = "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/boad%2Ffree_boad%2FMffvHR0Lv7c0ikZTgoH7CbhvSK53_20220101%2015%3A58%3A05%2F0?alt=media&token=b49105ed-2932-4825-a91c-5097fbc5feb4"/></div><div><img src = "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/boad%2Ffree_boad%2FMffvHR0Lv7c0ikZTgoH7CbhvSK53_20220101%2015%3A58%3A03%2F1?alt=media&token=2a8720b6-5c67-4ec1-bddc-6cc9205b8470"/></div>',
+                '<p>ㅏ탙햫</p><p>ㅐ해햏</p><div><img src = "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/boad%2Ffree_boad%2FMffvHR0Lv7c0ikZTgoH7CbhvSK53_20220101%2015%3A58%3A05%2F0?alt=media&token=b49105ed-2932-4825-a91c-5097fbc5feb4"/></div><div><img src = "https://firebasestorage.googleapis.com/v0/b/metagamer-8d6a1.appspot.com/o/boad%2Ffree_boad%2FMffvHR0Lv7c0ikZTgoH7CbhvSK53_20220101%2015%3A58%3A03%2F1?alt=media&token=2a8720b6-5c67-4ec1-bddc-6cc9205b8470"/></div>',
           ),
         ),
         Container(
