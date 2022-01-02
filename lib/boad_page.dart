@@ -171,13 +171,15 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
               crossAxisSpacing: 10,
             ),
             itemBuilder: (BuildContext context, int index) {
-              return OutlinedButton(onPressed: () async {
-                setState(() {
-                  _controller.reverse();
-                  isOpen = false;
-                  categoryPage = index;
-                });
-              }, child: Text(categoryList[index]));
+              return OutlinedButton(
+                  onPressed: () async {
+                    setState(() {
+                      _controller.reverse();
+                      isOpen = false;
+                      categoryPage = index;
+                    });
+                  },
+                  child: Text(categoryList[index]));
             },
           ),
         ),
@@ -261,11 +263,57 @@ class BoadCategory extends StatefulWidget {
 }
 
 class _BoadCategoryState extends State<BoadCategory> {
+  final _firestore = FirebaseFirestore.instance.collection("free_boad");
+
+  Future<List<BoadModel>> getData() async {
+    List<BoadModel> data = [];
+    await _firestore.get().then(
+      (QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach(
+          (element) {
+            BoadModel boadModel = BoadModel(
+              time: element['time'],
+              uid: element['uid'],
+              nickname: element['nickname'],
+              title: element['title'],
+              content: element['content'],
+              like: element['like'],
+              view: element['view'],
+            );
+            data.add(boadModel);
+          },
+        );
+      },
+    );
+    return data;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(getCategoryName(widget.categoryPage)),
+      child: Column(
+        children: [
+          Text(getCategoryName(widget.categoryPage)),
+          FutureBuilder<List<BoadModel>>(
+            future: getData(),
+            builder: (context, snapshot) {
+              List<BoadModel> dataList = snapshot.data ?? [];
+              if (snapshot.hasError) print(snapshot.error);
+              return snapshot.hasData
+                  ? ListView.builder(
+                shrinkWrap: true,
+                      itemCount: dataList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Text(dataList[index].title.toString());
+                      },
+                    )
+                  : Center(
+                      child: CircularProgressIndicator(),
+                    );
+            },
+          )
+        ],
+      ),
     );
   }
 
@@ -282,7 +330,7 @@ class _BoadCategoryState extends State<BoadCategory> {
       return '히엠게시판';
     } else if (pageNum == 5) {
       return '히캣게시판';
-    } else if (pageNum == 6){
+    } else if (pageNum == 6) {
       return '또게시판';
     } else {
       return '';

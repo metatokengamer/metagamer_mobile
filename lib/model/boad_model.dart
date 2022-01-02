@@ -17,13 +17,13 @@ class BoadModel {
       required this.view});
 
   BoadModel.fromJson(Map<String, dynamic> json)
-      : time = json['time'],
-        uid = json['uid'],
-        nickname = json['nickname'],
-        title = json['title'],
-        content = json['content'],
-        like = json['like'],
-        view = json['view'];
+      : time = json['time'] as String,
+        uid = json['uid'] as String,
+        nickname = json['nickname'] as String,
+        title = json['title'] as String,
+        content = json['content'] as String,
+        like = json['like'] as int,
+        view = json['view'] as int;
 
   Map<String, dynamic> toJson() => {
         'time': time,
