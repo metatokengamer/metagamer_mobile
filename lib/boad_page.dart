@@ -242,6 +242,7 @@ class _BoadState extends State<Boad> {
         } on FirebaseException catch (e) {
           print("인터넷 연결 안좋음: " + toString());
           //dialog 띄우기
+          //이미 업로드 한 파일 있으면 지우기
         }
       }
     }
@@ -265,12 +266,13 @@ class _BoadState extends State<Boad> {
             picPath1 +
             picPath2 +
             picPath3,
-        like: "0",
-        view: "0");
+        like: 0,
+        view: 0);
     await reference
         .doc(docName)
         .set(model.toJson())
-        .catchError((e) => print("laskdjf")); //upload firestore
+        .catchError((e) => print("laskdjf")); //upload firestore.
+    //에러시 업로드 했던 storage 파일 지우기
   }
 
   Widget ImageSet(String path, VoidCallback onPressed) {

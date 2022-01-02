@@ -4,8 +4,8 @@ class BoadModel {
   final String nickname;
   final String title;
   final String content;
-  final String like;
-  final String view;
+  final int like;
+  final int view;
 
   BoadModel(
       {required this.time,
@@ -25,13 +25,13 @@ class BoadModel {
         like = json['like'],
         view = json['view'];
 
-  Map<String, String> toJson() => {
+  Map<String, dynamic> toJson() => {
         'time': time,
         'uid': uid,
         'nickname': nickname,
         'title': title,
         'content': content,
-        'like': like,
-        'view': view
+        'like': 0,
+        'view': 0
       };
 }
