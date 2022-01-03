@@ -15,6 +15,7 @@ import 'package:intl/intl.dart';
 import 'package:metagamer/current_route.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:metagamer/model/boad_model.dart';
+import 'package:metagamer/write_boad_page.dart';
 
 import 'appbar.dart';
 import 'bottom_nav.dart';
@@ -194,7 +195,7 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
           ),
         ),
         categoryPage == 0
-            ? BoadMain()
+            ? BoadMain(categoryPage: categoryPage)
             : BoadCategory(categoryPage: categoryPage)
       ],
     );
@@ -209,7 +210,8 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
 }
 
 class BoadMain extends StatefulWidget {
-  const BoadMain({Key? key}) : super(key: key);
+  final int categoryPage;
+  const BoadMain({Key? key, required this.categoryPage}) : super(key: key);
 
   @override
   _BoadMainState createState() => _BoadMainState();
@@ -218,48 +220,113 @@ class BoadMain extends StatefulWidget {
 class _BoadMainState extends State<BoadMain> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-      child: Container(
-        height: 200,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                  spreadRadius: 1,
-                  blurRadius: 1,
-                  offset: Offset(1, 1),
-                  color: Colors.grey)
-            ]),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Text("최신글"),
-                ],
-              ),
-              Container(),
-              Row(
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Opacity(
+                opacity: 0.0,
+                child: ElevatedButton(onPressed: () {}, child: Text("글쓰기"))),
+            Text(getCategoryName(widget.categoryPage)),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => WriteBoadPage(
+                        category: widget.categoryPage,
+                      ),
+                    ),
+                  );
+                },
+                child: Text("글쓰기"))
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          child: Container(
+            height: 200,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                      spreadRadius: 1,
+                      blurRadius: 1,
+                      offset: Offset(1, 1),
+                      color: Colors.grey)
+                ]),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Opacity(opacity: 0.0),
-                  TextButton(
-                    onPressed: () {
-                      null;
-                    },
-                    child: Text("더보기"),
+                  Row(
+                    children: [
+                      Text("최신글"),
+                    ],
                   ),
+                  Container(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Opacity(opacity: 0.0),
+                      TextButton(
+                        onPressed: () {
+                          null;
+                        },
+                        child: Text("더보기"),
+                      ),
+                    ],
+                  )
                 ],
-              )
-            ],
+              ),
+            ),
           ),
         ),
-      ),
+      ],
     );
+  }
+
+  String getCategoryName(int pageNum) {
+    if (pageNum == 0) {
+      return 'main';
+    } else if (pageNum == 1) {
+      return '자유게시판';
+    } else if (pageNum == 2) {
+      return '사드게시판';
+    } else if (pageNum == 3) {
+      return '붐크게시판';
+    } else if (pageNum == 4) {
+      return '히엠게시판';
+    } else if (pageNum == 5) {
+      return '히캣게시판';
+    } else if (pageNum == 6) {
+      return '또게시판';
+    } else {
+      return '';
+    }
+  }
+
+  String getBoadName(int pageNum) {
+    if (pageNum == 0) {
+      return 'main';
+    } else if (pageNum == 1) {
+      return 'free_boad';
+    } else if (pageNum == 2) {
+      return 'sad_boad';
+    } else if (pageNum == 3) {
+      return 'bomb_boad';
+    } else if (pageNum == 4) {
+      return 'bnbh_boad';
+    } else if (pageNum == 5) {
+      return 'hicat_boad';
+    } else if (pageNum == 6) {
+      return 'agian_boad';
+    } else {
+      return '';
+    }
   }
 }
 
@@ -273,9 +340,9 @@ class BoadCategory extends StatefulWidget {
 }
 
 class _BoadCategoryState extends State<BoadCategory> {
-
   Future<List<BoadModel>> getData() async {
-    final _firestore = FirebaseFirestore.instance.collection(getBoadName(widget.categoryPage));
+    final _firestore =
+        FirebaseFirestore.instance.collection(getBoadName(widget.categoryPage));
     List<BoadModel> data = [];
     await _firestore.get().then(
       (QuerySnapshot querySnapshot) {
@@ -317,7 +384,18 @@ class _BoadCategoryState extends State<BoadCategory> {
                   opacity: 0.0,
                   child: ElevatedButton(onPressed: () {}, child: Text("글쓰기"))),
               Text(getCategoryName(widget.categoryPage)),
-              ElevatedButton(onPressed: () {}, child: Text("글쓰기"))
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WriteBoadPage(
+                          category: widget.categoryPage,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text("글쓰기"))
             ],
           ),
           FutureBuilder<List<BoadModel>>(
@@ -344,8 +422,6 @@ class _BoadCategoryState extends State<BoadCategory> {
                     );
             },
           )
-
-
 
           // ListView.builder(
           //   shrinkWrap: true,
@@ -412,7 +488,15 @@ class ListViewItem extends StatefulWidget {
   final String time;
   final int view;
   final int commentCount;
-  const ListViewItem({Key? key, required this.title, required this.nickname, required this.time, required this.view, required this.commentCount}) : super(key: key);
+
+  const ListViewItem(
+      {Key? key,
+      required this.title,
+      required this.nickname,
+      required this.time,
+      required this.view,
+      required this.commentCount})
+      : super(key: key);
 
   @override
   _ListViewItemState createState() => _ListViewItemState();
@@ -464,17 +548,6 @@ class _ListViewItemState extends State<ListViewItem> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 class Boad2 extends StatefulWidget {
   const Boad2({Key? key}) : super(key: key);
