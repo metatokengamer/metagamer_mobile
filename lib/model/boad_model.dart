@@ -6,6 +6,7 @@ class BoadModel {
   final String content;
   final int like;
   final int view;
+  final int comment;
 
   BoadModel(
       {required this.time,
@@ -14,7 +15,8 @@ class BoadModel {
       required this.title,
       required this.content,
       required this.like,
-      required this.view});
+      required this.view,
+      required this.comment});
 
   BoadModel.fromJson(Map<String, dynamic> json)
       : time = json['time'] as String,
@@ -23,7 +25,8 @@ class BoadModel {
         title = json['title'] as String,
         content = json['content'] as String,
         like = json['like'] as int,
-        view = json['view'] as int;
+        view = json['view'] as int,
+        comment = json['comment'] as int;
 
   Map<String, dynamic> toJson() => {
         'time': time,
@@ -31,7 +34,8 @@ class BoadModel {
         'nickname': nickname,
         'title': title,
         'content': content,
-        'like': 0,
-        'view': 0
+        'like': like,
+        'view': view,
+        'comment': comment,
       };
 }

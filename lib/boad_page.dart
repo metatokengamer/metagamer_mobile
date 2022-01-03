@@ -128,10 +128,10 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
     super.initState();
     categoryPage = 0;
     _controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 400));
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _animation.addListener(() {
-      setState(() {});
+      // setState(() {});
     });
   }
 
@@ -141,15 +141,22 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
       children: [
         GestureDetector(
           onTap: () {
-            setState(() {
-              if (isOpen) {
-                isOpen = false;
-                _controller.reverse();
-              } else {
-                isOpen = true;
-                _controller.forward();
-              }
-            });
+            if (isOpen) {
+              isOpen = false;
+              _controller.reverse();
+            } else {
+              isOpen = true;
+              _controller.forward();
+            }
+            // setState(() {
+            //   if (isOpen) {
+            //     isOpen = false;
+            //     _controller.reverse();
+            //   } else {
+            //     isOpen = true;
+            //     _controller.forward();
+            //   }
+            // });
           },
           child: Row(
             children: [
@@ -173,6 +180,9 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
             itemBuilder: (BuildContext context, int index) {
               return OutlinedButton(
                   onPressed: () async {
+                    // _controller.reverse();
+                    // isOpen = false;
+                    // categoryPage = index;
                     setState(() {
                       _controller.reverse();
                       isOpen = false;
@@ -263,29 +273,36 @@ class BoadCategory extends StatefulWidget {
 }
 
 class _BoadCategoryState extends State<BoadCategory> {
-  final _firestore = FirebaseFirestore.instance.collection("free_boad");
 
   Future<List<BoadModel>> getData() async {
+    final _firestore = FirebaseFirestore.instance.collection(getBoadName(widget.categoryPage));
     List<BoadModel> data = [];
     await _firestore.get().then(
       (QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach(
-          (element) {
+          (element) async {
             BoadModel boadModel = BoadModel(
-              time: element['time'],
-              uid: element['uid'],
-              nickname: element['nickname'],
-              title: element['title'],
-              content: element['content'],
-              like: element['like'],
-              view: element['view'],
-            );
+                time: element['time'],
+                uid: element['uid'],
+                nickname: element['nickname'],
+                title: element['title'],
+                content: element['content'],
+                like: element['like'],
+                view: element['view'],
+                comment: element['comment']);
             data.add(boadModel);
           },
         );
       },
     );
+    print(">>>: " + data.length.toString());
     return data;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -293,7 +310,16 @@ class _BoadCategoryState extends State<BoadCategory> {
     return Center(
       child: Column(
         children: [
-          Text(getCategoryName(widget.categoryPage)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Opacity(
+                  opacity: 0.0,
+                  child: ElevatedButton(onPressed: () {}, child: Text("글쓰기"))),
+              Text(getCategoryName(widget.categoryPage)),
+              ElevatedButton(onPressed: () {}, child: Text("글쓰기"))
+            ],
+          ),
           FutureBuilder<List<BoadModel>>(
             future: getData(),
             builder: (context, snapshot) {
@@ -301,10 +327,16 @@ class _BoadCategoryState extends State<BoadCategory> {
               if (snapshot.hasError) print(snapshot.error);
               return snapshot.hasData
                   ? ListView.builder(
-                shrinkWrap: true,
+                      shrinkWrap: true,
                       itemCount: dataList.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return Text(dataList[index].title.toString());
+                        // return Text(dataList[index].title.toString());
+                        return ListViewItem(
+                            title: dataList[index].title,
+                            nickname: dataList[index].nickname,
+                            time: dataList[index].time,
+                            view: dataList[index].view,
+                            commentCount: dataList[index].comment);
                       },
                     )
                   : Center(
@@ -312,6 +344,22 @@ class _BoadCategoryState extends State<BoadCategory> {
                     );
             },
           )
+
+
+
+          // ListView.builder(
+          //   shrinkWrap: true,
+          //   itemCount: data.length,
+          //   itemBuilder: (BuildContext context, int index) {
+          //     return ListViewItem(
+          //       title: data[index].title,
+          //       nickname: data[index].nickname,
+          //       time: data[index].time,
+          //       view: data[index].view,
+          //       commentCount: data[index].comment,
+          //     );
+          //   },
+          // )
         ],
       ),
     );
@@ -336,7 +384,97 @@ class _BoadCategoryState extends State<BoadCategory> {
       return '';
     }
   }
+
+  String getBoadName(int pageNum) {
+    if (pageNum == 0) {
+      return 'main';
+    } else if (pageNum == 1) {
+      return 'free_boad';
+    } else if (pageNum == 2) {
+      return 'sad_boad';
+    } else if (pageNum == 3) {
+      return 'bomb_boad';
+    } else if (pageNum == 4) {
+      return 'bnbh_boad';
+    } else if (pageNum == 5) {
+      return 'hicat_boad';
+    } else if (pageNum == 6) {
+      return 'agian_boad';
+    } else {
+      return '';
+    }
+  }
 }
+
+class ListViewItem extends StatefulWidget {
+  final String title;
+  final String nickname;
+  final String time;
+  final int view;
+  final int commentCount;
+  const ListViewItem({Key? key, required this.title, required this.nickname, required this.time, required this.view, required this.commentCount}) : super(key: key);
+
+  @override
+  _ListViewItemState createState() => _ListViewItemState();
+}
+
+class _ListViewItemState extends State<ListViewItem> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(widget.title),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    children: [
+                      Text(widget.nickname),
+                      SizedBox(width: 10),
+                      Text(widget.time),
+                      SizedBox(width: 10),
+                      Row(
+                        children: [
+                          Icon(Icons.remove_red_eye_rounded),
+                          Text(widget.view.toString())
+                        ],
+                      )
+                    ],
+                  )
+                ],
+              ),
+              Text(widget.commentCount.toString())
+            ],
+          ),
+          Divider(
+            height: 5,
+            thickness: 1,
+            color: Colors.grey[350],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 class Boad2 extends StatefulWidget {
   const Boad2({Key? key}) : super(key: key);
@@ -537,7 +675,8 @@ class _Boad2State extends State<Boad2> {
             picPath2 +
             picPath3,
         like: 0,
-        view: 0);
+        view: 0,
+        comment: 0);
     await reference
         .doc(docName)
         .set(model.toJson())
@@ -736,4 +875,33 @@ class _BoadTestState extends State<BoadTest> {
     <p>1문단입니다</p>
     <p>2문단입니다</p>
   """;
+}
+
+class BoadTest2 extends StatefulWidget {
+  const BoadTest2({Key? key}) : super(key: key);
+
+  @override
+  _BoadTest2State createState() => _BoadTest2State();
+}
+
+class _BoadTest2State extends State<BoadTest2> {
+  final _firestore = FirebaseFirestore.instance.collection("free_boad");
+  List<String> elementId = [];
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: OutlinedButton(
+        child: Text("test"),
+        onPressed: () async {
+          await _firestore.get().then((QuerySnapshot querySnapshot) async {
+            querySnapshot.docs.forEach((element) {
+              elementId.add(element.id);
+              print(">>>: " + element.id);
+            });
+          });
+        },
+      ),
+    );
+  }
 }
