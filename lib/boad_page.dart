@@ -211,6 +211,7 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
 
 class BoadMain extends StatefulWidget {
   final int categoryPage;
+
   const BoadMain({Key? key, required this.categoryPage}) : super(key: key);
 
   @override
@@ -398,30 +399,39 @@ class _BoadCategoryState extends State<BoadCategory> {
                   child: Text("글쓰기"))
             ],
           ),
-          FutureBuilder<List<BoadModel>>(
-            future: getData(),
-            builder: (context, snapshot) {
-              List<BoadModel> dataList = snapshot.data ?? [];
-              if (snapshot.hasError) print(snapshot.error);
-              return snapshot.hasData
-                  ? ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: dataList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        // return Text(dataList[index].title.toString());
-                        return ListViewItem(
-                            title: dataList[index].title,
-                            nickname: dataList[index].nickname,
-                            time: dataList[index].time,
-                            view: dataList[index].view,
-                            commentCount: dataList[index].comment);
-                      },
-                    )
-                  : Center(
-                      child: CircularProgressIndicator(),
-                    );
-            },
-          )
+          Column(
+            children: [
+              FutureBuilder<List<BoadModel>>(
+                future: getData(),
+                builder: (context, snapshot) {
+                  List<BoadModel> dataList = snapshot.data ?? [];
+                  if (snapshot.hasError) print(snapshot.error);
+                  return snapshot.hasData
+                      ? ListView.builder(
+                          physics: BouncingScrollPhysics(),
+                          // physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                          shrinkWrap: true,
+                          itemCount: dataList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            // return Text(dataList[index].title.toString());
+                            return ListViewItem(
+                                title: dataList[index].title,
+                                nickname: dataList[index].nickname,
+                                time: dataList[index].time,
+                                view: dataList[index].view,
+                                commentCount: dataList[index].comment);
+                          },
+                        )
+                      : Center(
+                          child: CircularProgressIndicator(),
+                        );
+                },
+              ),
+              Row(
+                children: [Text("dafs")],
+              )
+            ],
+          ),
 
           // ListView.builder(
           //   shrinkWrap: true,
