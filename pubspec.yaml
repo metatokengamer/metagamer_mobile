@@ -45,6 +45,7 @@ dependencies:
   file_picker: ^4.3.0 #file picker
   flutter_html: ^2.2.1 #show html
   flutter_inappwebview: ^5.3.2 #webivew
+  pull_to_refresh: ^2.0.0 #scroll reflesh
 
 dev_dependencies:
   flutter_test:

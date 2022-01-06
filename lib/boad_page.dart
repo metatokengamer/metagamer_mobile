@@ -341,6 +341,25 @@ class BoadCategory extends StatefulWidget {
 }
 
 class _BoadCategoryState extends State<BoadCategory> {
+  ScrollController _scrollController = ScrollController();
+
+  // RefreshController _refreshController =
+  //     RefreshController(initialRefresh: false);
+
+  // void _onReflesh() async {
+  //   await Future.delayed(Duration(milliseconds: 1000));
+  //   _refreshController.refreshCompleted();
+  // }
+  //
+  // void _onLoading() async {
+  //   await Future.delayed(Duration(milliseconds: 1000));
+  //   //reflesh data
+  //   if (mounted) {
+  //     setState(() {});
+  //   }
+  //   _refreshController.loadComplete();
+  // }
+
   Future<List<BoadModel>> getData() async {
     final _firestore =
         FirebaseFirestore.instance.collection(getBoadName(widget.categoryPage));
@@ -369,85 +388,130 @@ class _BoadCategoryState extends State<BoadCategory> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    print("initState()");
+    _scrollController.addListener(() {
+      print(">>>");
+      if (_scrollController.position.atEdge) {
+        bool isTop = _scrollController.position.pixels == 0;
+        if (isTop) {
+          print('>>>At the top');
+        } else {
+          print('>>>At the bottom');
+        }
+      }
+    });
     super.initState();
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    // scrollController.dispose();
+    super.dispose();
+  }
+
+  // onNotification: (scrollEnd) {
+  // final metrics = scrollEnd.metrics;
+  // if (scrollEnd.metrics.atEdge) {
+  // bool isTop = metrics.pixels == 0;
+  // if (isTop) {
+  // print('At the top');
+  // } else {
+  // print('At the bottom');
+  // }
+  // }
+  // return true;
+  // },
+
+  @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Opacity(
-                  opacity: 0.0,
-                  child: ElevatedButton(onPressed: () {}, child: Text("글쓰기"))),
-              Text(getCategoryName(widget.categoryPage)),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WriteBoadPage(
-                          category: widget.categoryPage,
-                        ),
-                      ),
-                    );
-                  },
-                  child: Text("글쓰기"))
-            ],
-          ),
-          Column(
-            children: [
-              FutureBuilder<List<BoadModel>>(
-                future: getData(),
-                builder: (context, snapshot) {
-                  List<BoadModel> dataList = snapshot.data ?? [];
-                  if (snapshot.hasError) print(snapshot.error);
-                  return snapshot.hasData
-                      ? ListView.builder(
-                          physics: BouncingScrollPhysics(),
-                          // physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                          shrinkWrap: true,
-                          itemCount: dataList.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            // return Text(dataList[index].title.toString());
-                            return ListViewItem(
-                                title: dataList[index].title,
-                                nickname: dataList[index].nickname,
-                                time: dataList[index].time,
-                                view: dataList[index].view,
-                                commentCount: dataList[index].comment);
+    return FutureBuilder<List<BoadModel>>(
+      future: getData(),
+      builder: (context, snapshot) {
+        List<BoadModel> dataList = snapshot.data ?? [];
+        if (snapshot.hasError) print(snapshot.error);
+        return RefreshIndicator(
+          onRefresh: () async {},
+          child: NotificationListener<ScrollEndNotification>(
+            onNotification: (scrollEnd) {
+              final metrics = scrollEnd.metrics;
+              if (scrollEnd.metrics.atEdge) {
+                bool isTop = metrics.pixels == 0;
+                if (isTop) {
+                  print('At the top');
+                } else {
+                  print('At the bottom');
+                }
+              }
+              return true;
+            },
+            child: SingleChildScrollView(
+              // controller: _scrollController,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Opacity(
+                          opacity: 0.0,
+                          child:
+                              ElevatedButton(onPressed: () {}, child: Text("글쓰기"))),
+                      Text(getCategoryName(widget.categoryPage)),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => WriteBoadPage(
+                                  category: widget.categoryPage,
+                                ),
+                              ),
+                            );
                           },
+                          child: Text("글쓰기"))
+                    ],
+                  ),
+                  snapshot.hasData
+                      ? Column(
+                          children: [
+                            ListView.builder(
+                              // controller: _scrollController,
+                              // physics: BouncingScrollPhysics(),
+                              physics: NeverScrollableScrollPhysics(),
+                              // physics: AlwaysScrollableScrollPhysics(),
+                              // physics: FixedExtentScrollPhysics(),//dx
+                              // physics: ClampingScrollPhysics(),
+                              // physics: PageScrollPhysics(),
+                              // physics: RangeMaintainingScrollPhysics(),
+                              // physics: ScrollPhysics(),
+                              // physics: RefreshPhysics(),
+                              shrinkWrap: true,
+                              // scrollDirection: Axis.vertical,
+                              itemCount: dataList.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                // return Text(dataList[index].title.toString());
+                                return ListViewItem(
+                                    title: dataList[index].title,
+                                    nickname: dataList[index].nickname,
+                                    time: dataList[index].time,
+                                    view: dataList[index].view,
+                                    commentCount: dataList[index].comment);
+                              },
+                            ),
+                            Row(
+                              children: [Text("dafs")],
+                            )
+                          ],
                         )
                       : Center(
                           child: CircularProgressIndicator(),
-                        );
-                },
+                        )
+                ],
               ),
-              Row(
-                children: [Text("dafs")],
-              )
-            ],
+            ),
           ),
-
-          // ListView.builder(
-          //   shrinkWrap: true,
-          //   itemCount: data.length,
-          //   itemBuilder: (BuildContext context, int index) {
-          //     return ListViewItem(
-          //       title: data[index].title,
-          //       nickname: data[index].nickname,
-          //       time: data[index].time,
-          //       view: data[index].view,
-          //       commentCount: data[index].comment,
-          //     );
-          //   },
-          // )
-        ],
-      ),
+        );
+      },
     );
   }
 
