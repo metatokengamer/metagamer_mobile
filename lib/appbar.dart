@@ -18,6 +18,7 @@ class _AppBarState extends State<CustomAppbar> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 65.0,
       padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

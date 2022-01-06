@@ -47,8 +47,7 @@ class _BoadPageState extends State<BoadPage> {
           final cantExit = timegap >= Duration(seconds: 2);
           pre_backpress = DateTime.now();
           if (cantExit) {
-            final snack = SnackBar(
-                content: Text("한번더눌러서종료"), duration: Duration(seconds: 2));
+            final snack = SnackBar(content: Text("한번더눌러서종료"), duration: Duration(seconds: 2));
             ScaffoldMessenger.of(context).showSnackBar(snack);
             return false;
           } else {
@@ -62,18 +61,29 @@ class _BoadPageState extends State<BoadPage> {
                 top: 0,
                 left: 0,
                 right: 0,
+                child: CustomAppbar(),
+                // Column(
+                //   children: [
+                //     CustomAppbar(),
+                //     Expanded(
+                //       child: SingleChildScrollView(
+                //         scrollDirection: Axis.vertical,
+                //         child: Boad(),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+              ),
+              Positioned(
+                top: 65,
                 bottom: 50,
-                child: Column(
-                  children: [
-                    CustomAppbar(),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: Boad(),
-                      ),
-                    ),
-                  ],
-                ),
+                left: 0,
+                right: 0,
+                child: RefreshIndicator(
+                    onRefresh: () async {
+                      await Future.delayed(Duration(seconds: 1));
+                    },
+                    child: SingleChildScrollView(child: Boad())),
               ),
               Positioned(
                 bottom: 0,
@@ -114,22 +124,13 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
   String nowCategory = '';
   bool isOpen = false;
   int categoryPage = 0;
-  List<String> categoryList = [
-    "메인",
-    "자유게시판",
-    "사드게시판",
-    "붐크게시판",
-    "히엠게시판",
-    "히캣게시판",
-    "또게시판"
-  ];
+  List<String> categoryList = ["메인", "자유게시판", "사드게시판", "붐크게시판", "히엠게시판", "히캣게시판", "또게시판"];
 
   @override
   void initState() {
     super.initState();
     categoryPage = 0;
-    _controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 400));
+    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 400));
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _animation.addListener(() {
       // setState(() {});
@@ -160,10 +161,7 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
             // });
           },
           child: Row(
-            children: [
-              Text("현제 카테고리"),
-              Icon(isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down)
-            ],
+            children: [Text("현제 카테고리"), Icon(isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down)],
           ),
         ),
         SizeTransition(
@@ -194,9 +192,7 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
             },
           ),
         ),
-        categoryPage == 0
-            ? BoadMain(categoryPage: categoryPage)
-            : BoadCategory(categoryPage: categoryPage)
+        categoryPage == 0 ? BoadMain(categoryPage: categoryPage) : BoadCategory(categoryPage: categoryPage)
       ],
     );
   }
@@ -226,9 +222,7 @@ class _BoadMainState extends State<BoadMain> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Opacity(
-                opacity: 0.0,
-                child: ElevatedButton(onPressed: () {}, child: Text("글쓰기"))),
+            Opacity(opacity: 0.0, child: ElevatedButton(onPressed: () {}, child: Text("글쓰기"))),
             Text(getCategoryName(widget.categoryPage)),
             ElevatedButton(
                 onPressed: () {
@@ -251,13 +245,7 @@ class _BoadMainState extends State<BoadMain> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
                 color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      spreadRadius: 1,
-                      blurRadius: 1,
-                      offset: Offset(1, 1),
-                      color: Colors.grey)
-                ]),
+                boxShadow: [BoxShadow(spreadRadius: 1, blurRadius: 1, offset: Offset(1, 1), color: Colors.grey)]),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -361,8 +349,7 @@ class _BoadCategoryState extends State<BoadCategory> {
   // }
 
   Future<List<BoadModel>> getData() async {
-    final _firestore =
-        FirebaseFirestore.instance.collection(getBoadName(widget.categoryPage));
+    final _firestore = FirebaseFirestore.instance.collection(getBoadName(widget.categoryPage));
     List<BoadModel> data = [];
     await _firestore.get().then(
       (QuerySnapshot querySnapshot) {
@@ -430,86 +417,63 @@ class _BoadCategoryState extends State<BoadCategory> {
       builder: (context, snapshot) {
         List<BoadModel> dataList = snapshot.data ?? [];
         if (snapshot.hasError) print(snapshot.error);
-        return RefreshIndicator(
-          onRefresh: () async {},
-          child: NotificationListener<ScrollEndNotification>(
-            onNotification: (scrollEnd) {
-              final metrics = scrollEnd.metrics;
-              if (scrollEnd.metrics.atEdge) {
-                bool isTop = metrics.pixels == 0;
-                if (isTop) {
-                  print('At the top');
-                } else {
-                  print('At the bottom');
-                }
-              }
-              return true;
-            },
-            child: SingleChildScrollView(
-              // controller: _scrollController,
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Opacity(
-                          opacity: 0.0,
-                          child:
-                              ElevatedButton(onPressed: () {}, child: Text("글쓰기"))),
-                      Text(getCategoryName(widget.categoryPage)),
-                      ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => WriteBoadPage(
-                                  category: widget.categoryPage,
-                                ),
-                              ),
-                            );
-                          },
-                          child: Text("글쓰기"))
-                    ],
-                  ),
-                  snapshot.hasData
-                      ? Column(
-                          children: [
-                            ListView.builder(
-                              // controller: _scrollController,
-                              // physics: BouncingScrollPhysics(),
-                              physics: NeverScrollableScrollPhysics(),
-                              // physics: AlwaysScrollableScrollPhysics(),
-                              // physics: FixedExtentScrollPhysics(),//dx
-                              // physics: ClampingScrollPhysics(),
-                              // physics: PageScrollPhysics(),
-                              // physics: RangeMaintainingScrollPhysics(),
-                              // physics: ScrollPhysics(),
-                              // physics: RefreshPhysics(),
-                              shrinkWrap: true,
-                              // scrollDirection: Axis.vertical,
-                              itemCount: dataList.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                // return Text(dataList[index].title.toString());
-                                return ListViewItem(
-                                    title: dataList[index].title,
-                                    nickname: dataList[index].nickname,
-                                    time: dataList[index].time,
-                                    view: dataList[index].view,
-                                    commentCount: dataList[index].comment);
-                              },
-                            ),
-                            Row(
-                              children: [Text("dafs")],
-                            )
-                          ],
-                        )
-                      : Center(
-                          child: CircularProgressIndicator(),
-                        )
-                ],
-              ),
+        return Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Opacity(opacity: 0.0, child: ElevatedButton(onPressed: () {}, child: Text("글쓰기"))),
+                Text(getCategoryName(widget.categoryPage)),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WriteBoadPage(
+                            category: widget.categoryPage,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text("글쓰기"))
+              ],
             ),
-          ),
+            snapshot.hasData
+                ? Column(
+                    children: [
+                      ListView.builder(
+                        // controller: _scrollController,
+                        // physics: BouncingScrollPhysics(),
+                        physics: NeverScrollableScrollPhysics(),
+                        // physics: AlwaysScrollableScrollPhysics(),
+                        // physics: FixedExtentScrollPhysics(),//dx
+                        // physics: ClampingScrollPhysics(),
+                        // physics: PageScrollPhysics(),
+                        // physics: RangeMaintainingScrollPhysics(),
+                        // physics: ScrollPhysics(),
+                        // physics: RefreshPhysics(),
+                        shrinkWrap: true,
+                        // scrollDirection: Axis.vertical,
+                        itemCount: dataList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          // return Text(dataList[index].title.toString());
+                          return ListViewItem(
+                              title: dataList[index].title,
+                              nickname: dataList[index].nickname,
+                              time: dataList[index].time,
+                              view: dataList[index].view,
+                              commentCount: dataList[index].comment);
+                        },
+                      ),
+                      Row(
+                        children: [Text("dafs")],
+                      )
+                    ],
+                  )
+                : Center(
+                    child: CircularProgressIndicator(),
+                  )
+          ],
         );
       },
     );
@@ -563,13 +527,7 @@ class ListViewItem extends StatefulWidget {
   final int view;
   final int commentCount;
 
-  const ListViewItem(
-      {Key? key,
-      required this.title,
-      required this.nickname,
-      required this.time,
-      required this.view,
-      required this.commentCount})
+  const ListViewItem({Key? key, required this.title, required this.nickname, required this.time, required this.view, required this.commentCount})
       : super(key: key);
 
   @override
@@ -600,10 +558,7 @@ class _ListViewItemState extends State<ListViewItem> {
                       Text(widget.time),
                       SizedBox(width: 10),
                       Row(
-                        children: [
-                          Icon(Icons.remove_red_eye_rounded),
-                          Text(widget.view.toString())
-                        ],
+                        children: [Icon(Icons.remove_red_eye_rounded), Text(widget.view.toString())],
                       )
                     ],
                   )
@@ -671,18 +626,8 @@ class _Boad2State extends State<Boad2> {
                   hint: "Your text here...",
                 ),
                 htmlToolbarOptions: HtmlToolbarOptions(
-                  defaultToolbarButtons: [
-                    FontButtons(),
-                    ColorButtons(),
-                    InsertButtons(
-                        video: false,
-                        audio: false,
-                        table: false,
-                        hr: false,
-                        otherFile: false)
-                  ],
-                  mediaUploadInterceptor:
-                      (PlatformFile file, InsertFileType type) async {
+                  defaultToolbarButtons: [FontButtons(), ColorButtons(), InsertButtons(video: false, audio: false, table: false, hr: false, otherFile: false)],
+                  mediaUploadInterceptor: (PlatformFile file, InsertFileType type) async {
                     print(file.name); //filename
                     print(file.size); //size in bytes
                     print(file.extension); //file extension (eg jpeg or mp4)
@@ -747,8 +692,7 @@ class _Boad2State extends State<Boad2> {
   }
 
   void pickFile() async {
-    FilePickerResult? result = await FilePicker.platform
-        .pickFiles(allowMultiple: true, type: FileType.image);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true, type: FileType.image);
     if (result != null) {
       files = result.paths.map((path) => File(path!)).toList();
       if (files.length > 4) {
@@ -777,8 +721,7 @@ class _Boad2State extends State<Boad2> {
     if (files.length != 0) {
       for (int i = 0; i < files.length; i++) {
         try {
-          Reference reference = FirebaseStorage.instance.ref(
-              "/boad/free_boad/" + myUid + "_" + date + "/" + i.toString());
+          Reference reference = FirebaseStorage.instance.ref("/boad/free_boad/" + myUid + "_" + date + "/" + i.toString());
           await reference.putFile(files[i]);
           String downloadUrl = await reference.getDownloadURL();
           if (i == 0) {
@@ -804,30 +747,18 @@ class _Boad2State extends State<Boad2> {
   }
 
   void _uploadBoad(String myUid, String date, docName) async {
-    CollectionReference reference =
-        await FirebaseFirestore.instance.collection("free_boad");
-    String myNickName = await FirebaseFirestore.instance
-        .collection("user")
-        .doc(myUid)
-        .get()
-        .then((value) => value.get('nickname'));
+    CollectionReference reference = await FirebaseFirestore.instance.collection("free_boad");
+    String myNickName = await FirebaseFirestore.instance.collection("user").doc(myUid).get().then((value) => value.get('nickname'));
     BoadModel model = BoadModel(
         time: date,
         uid: myUid,
         nickname: myNickName,
         title: titleController.text,
-        content: await controller.getText() +
-            picPath0 +
-            picPath1 +
-            picPath2 +
-            picPath3,
+        content: await controller.getText() + picPath0 + picPath1 + picPath2 + picPath3,
         like: 0,
         view: 0,
         comment: 0);
-    await reference
-        .doc(docName)
-        .set(model.toJson())
-        .catchError((e) => print("laskdjf")); //upload firestore.
+    await reference.doc(docName).set(model.toJson()).catchError((e) => print("laskdjf")); //upload firestore.
     //에러시 업로드 했던 storage 파일 지우기
   }
 
@@ -884,18 +815,8 @@ class _Boad1State extends State<Boad1> {
             hint: "Your text here...",
           ),
           htmlToolbarOptions: HtmlToolbarOptions(
-            defaultToolbarButtons: [
-              FontButtons(),
-              ColorButtons(),
-              InsertButtons(
-                  video: false,
-                  audio: false,
-                  table: false,
-                  hr: false,
-                  otherFile: false)
-            ],
-            mediaUploadInterceptor:
-                (PlatformFile file, InsertFileType type) async {
+            defaultToolbarButtons: [FontButtons(), ColorButtons(), InsertButtons(video: false, audio: false, table: false, hr: false, otherFile: false)],
+            mediaUploadInterceptor: (PlatformFile file, InsertFileType type) async {
               print(file.name); //filename
               print(file.size); //size in bytes
               print(file.extension); //file extension (eg jpeg or mp4)
