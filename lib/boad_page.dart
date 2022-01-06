@@ -80,10 +80,14 @@ class _BoadPageState extends State<BoadPage> {
                 left: 0,
                 right: 0,
                 child: RefreshIndicator(
-                    onRefresh: () async {
-                      await Future.delayed(Duration(seconds: 1));
-                    },
-                    child: SingleChildScrollView(child: Boad())),
+                  onRefresh: () async {
+                    await Future.delayed(Duration(seconds: 1));
+                  },
+                  child: SingleChildScrollView(
+                    // physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                    child: Boad(),
+                  ),
+                ),
               ),
               Positioned(
                 bottom: 0,
