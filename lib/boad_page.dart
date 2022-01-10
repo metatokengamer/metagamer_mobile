@@ -79,15 +79,7 @@ class _BoadPageState extends State<BoadPage> {
                 bottom: 50,
                 left: 0,
                 right: 0,
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    await Future.delayed(Duration(seconds: 1));
-                  },
-                  child: SingleChildScrollView(
-                    // physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-                    child: Boad(),
-                  ),
-                ),
+                child: Boad(),
               ),
               Positioned(
                 bottom: 0,
@@ -112,6 +104,12 @@ class _BoadPageState extends State<BoadPage> {
       ),
     );
   }
+
+  void _updateData() {
+    setState(() {
+
+    });
+  }
 }
 
 class Boad extends StatefulWidget {
@@ -122,6 +120,7 @@ class Boad extends StatefulWidget {
 }
 
 class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
+  final GlobalKey<BoadCategoryState> _categoryKey = GlobalKey();
   late Animation<double> _animation;
   late AnimationController _controller;
 
@@ -143,61 +142,69 @@ class _BoadState extends State<Boad> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: () {
-            if (isOpen) {
-              isOpen = false;
-              _controller.reverse();
-            } else {
-              isOpen = true;
-              _controller.forward();
-            }
-            // setState(() {
-            //   if (isOpen) {
-            //     isOpen = false;
-            //     _controller.reverse();
-            //   } else {
-            //     isOpen = true;
-            //     _controller.forward();
-            //   }
-            // });
-          },
-          child: Row(
-            children: [Text("현제 카테고리"), Icon(isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down)],
-          ),
-        ),
-        SizeTransition(
-          sizeFactor: _animation,
-          child: GridView.builder(
-            shrinkWrap: true,
-            itemCount: categoryList.length,
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              // crossAxisCount: 2,
-              maxCrossAxisExtent: 150,
-              childAspectRatio: 4 / 1,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
+    return RefreshIndicator(
+      onRefresh: () async {
+        await Future.delayed(Duration(seconds: 1));
+        _categoryKey.currentState!.setState(() {});
+      },
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            GestureDetector(
+              onTap: () {
+                if (isOpen) {
+                  isOpen = false;
+                  _controller.reverse();
+                } else {
+                  isOpen = true;
+                  _controller.forward();
+                }
+                // setState(() {
+                //   if (isOpen) {
+                //     isOpen = false;
+                //     _controller.reverse();
+                //   } else {
+                //     isOpen = true;
+                //     _controller.forward();
+                //   }
+                // });
+              },
+              child: Row(
+                children: [Text("현제 카테고리"), Icon(isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down)],
+              ),
             ),
-            itemBuilder: (BuildContext context, int index) {
-              return OutlinedButton(
-                  onPressed: () async {
-                    // _controller.reverse();
-                    // isOpen = false;
-                    // categoryPage = index;
-                    setState(() {
-                      _controller.reverse();
-                      isOpen = false;
-                      categoryPage = index;
-                    });
-                  },
-                  child: Text(categoryList[index]));
-            },
-          ),
+            SizeTransition(
+              sizeFactor: _animation,
+              child: GridView.builder(
+                shrinkWrap: true,
+                itemCount: categoryList.length,
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  // crossAxisCount: 2,
+                  maxCrossAxisExtent: 150,
+                  childAspectRatio: 4 / 1,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  return OutlinedButton(
+                      onPressed: () async {
+                        // _controller.reverse();
+                        // isOpen = false;
+                        // categoryPage = index;
+                        setState(() {
+                          _controller.reverse();
+                          isOpen = false;
+                          categoryPage = index;
+                        });
+                      },
+                      child: Text(categoryList[index]));
+                },
+              ),
+            ),
+            categoryPage == 0 ? BoadMain(categoryPage: categoryPage) : BoadCategory(key: _categoryKey,categoryPage: categoryPage)
+          ],
         ),
-        categoryPage == 0 ? BoadMain(categoryPage: categoryPage) : BoadCategory(categoryPage: categoryPage)
-      ],
+      ),
     );
   }
 
@@ -329,10 +336,10 @@ class BoadCategory extends StatefulWidget {
   const BoadCategory({Key? key, required this.categoryPage}) : super(key: key);
 
   @override
-  _BoadCategoryState createState() => _BoadCategoryState();
+  BoadCategoryState createState() => BoadCategoryState();
 }
 
-class _BoadCategoryState extends State<BoadCategory> {
+class BoadCategoryState extends State<BoadCategory> {
   ScrollController _scrollController = ScrollController();
 
   // RefreshController _refreshController =
@@ -481,6 +488,10 @@ class _BoadCategoryState extends State<BoadCategory> {
         );
       },
     );
+  }
+
+  refreshBoad() {
+    print(">>> success");
   }
 
   String getCategoryName(int pageNum) {
